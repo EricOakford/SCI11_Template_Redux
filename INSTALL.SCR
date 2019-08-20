@@ -1,0 +1,49 @@
+clear
+space %1: 1000	NoSpace
+godir %1:%4	CantCreate
+rem	Copy over the necessary files.
+echo Copying INN Demo Files ...
+copy %2:*.drv
+copy %2:sci*.exe
+copy %2:interp.*
+copy %2:install.*
+copy %2:resource.map
+copy %2:resource.000
+copy %2:retail.txt
+del %2:install.scr
+copy %2:inndemo.bat
+
+echo %3 > resource.cfg
+
+:exit
+clear
+echo
+echo ÿTo play NOW:
+echo ÿ   Type INNDEMO [ENTER].
+echo
+echo ÿTo play LATER:
+echo ÿ   From the directory of %1:%4,
+echo ÿ   Type INNDEMO and press [ENTER].
+echo
+pause
+goto Exit2
+
+
+:NoSpace
+clear
+echo
+echo There is not enough space on %1: to install the INN Demo!
+echo 1 megabyte of disk space is necessary.
+echo
+pause
+
+
+:Exit2
+end
+
+
+:CantCreate
+alert Unable to create directory %1:%4
+end
+
+

@@ -1,0 +1,11 @@
+;;; Sierra Script 1.0 - (do not remove this comment)
+;;; 101.shp -- Produced by SCI Companion
+;;; This file should only be edited with the SCI Companion polygon editor
+
+
+(local
+	P_Default101 =  0
+	[P_room 11] = [1 PContainedAccess 4 61 101 2 189 319 189 259 101]
+	[P_table 11] = [1 PBarredAccess 4 85 129 133 128 134 146 83 146]
+	[P_lampBase 11] = [1 PBarredAccess 4 232 151 249 151 249 161 232 161]
+)
