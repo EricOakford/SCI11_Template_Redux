@@ -272,6 +272,21 @@
 	)
 
 	(method (init &tmp [mD 22])
+		;load some important modules
+		Print
+		BorderWindow
+		DText
+		DButton
+		StopWalk
+		Polygon
+		PolyPath
+		(ScriptID GAME_EGO)
+		Timer
+		IconBar
+		Inventory
+		(ScriptID SIGHT)
+		Narrator
+		Oscillate
 		(super init:)
 
 		;Assign globals to this script's objects
@@ -280,8 +295,7 @@
 		(= soundFx soundEffects)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
-		(= theStopGroop stopGroop)
-		;Set up the colors their own script		
+		(= theStopGroop stopGroop)	
 		(theMusic owner: self flags: mNOPAUSE init:)
 		(globalSound owner: self flags: mNOPAUSE init:)
 		(soundFx owner: self flags:	mNOPAUSE init:)
@@ -297,6 +311,9 @@
 		(if debugging
 			((ScriptID DEBUG 0) init:)
 		)
+		
+		(statusCode doit: roomNum)
+		((ScriptID DISPOSE_CODE 0) doit: roomNum)
 		;EO: despite what the message will say, the memory is NOT fragmented.
 		;Disabling the message until I can find a way to prevent it from
 		;appearing when changing rooms.
@@ -312,9 +329,6 @@
 ;;;			)
 ;;;			(SetDebug)
 ;;;		)
-		
-		(statusCode doit: roomNum)
-		((ScriptID DISPOSE_CODE 0) doit: roomNum)
 		(super startRoom: roomNum)
 		(if
 			(and
@@ -424,12 +438,12 @@
 		)
 	)
 	
-	(method (solvePuzzle flag points)
+	(method (solvePuzzle flagEnum points)
 		;Adds an amount to the player's current score.
 		;It checks if a certain flag is set so that the points are awarded only once.
-		(if (not (Btst flag))
+		(if (not (Btst flagEnum))
 			(= score (+ score points))
-			(Bset flag)
+			(Bset flagEnum)
 			(soundFx number: sPoints loop: 1 flags: mNOPAUSE play:)
 		)
 	)		
