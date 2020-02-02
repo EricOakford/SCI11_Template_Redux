@@ -2,7 +2,7 @@
 ;
 ;	GAMEINV.SC
 ;
-;	GameInventory and GameInvItem are game-specific subclasses of Inventory and InvItem, respectively.
+;	GameInvItem is a game-specific subclass of InvItem.
 ;	Here, you can add inventory item instances, and can create custom properties.
 ;	
 ;	 An example might be::
@@ -18,7 +18,7 @@
 ;	 		)
 ;	 	)
 ;	
-;	 Then in the GameInventory init, add the inventory item to the add: call.
+;	 Then in the invCode init, add the inventory item to the add: call.
 ;
 ;
 
@@ -37,6 +37,7 @@
 )
 
 (instance invCode of Code
+	;This code initializes the game's inventory
 	(properties)
 	
 	(method (init)
@@ -52,9 +53,8 @@
 			add: invLook invHand invSelect invMore invHelp ok
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
-			state: 2048
+			state: NOCLICKHELP
 		)
-		;(Money owner: ego)
 	)	
 )
 
@@ -101,12 +101,12 @@
 		(if (not modNum) (= modNum curRoomNum))
 		(switch theVerb
 			(V_LOOK
-				(if (Message MsgSize modNum noun V_LOOK 0 1)
+				(if (Message MsgSize modNum noun V_LOOK NULL 1)
 					(= icon (CelWide view loop cel))
 					(= port (GetPort))
 					(Print
 						addIcon: view loop cel 0 0
-						addText: noun V_LOOK 0 1 (+ icon 4) 0 modNum
+						addText: noun V_LOOK NULL 1 (+ icon 4) 0 modNum
 						init:
 					)
 					(SetPort port)

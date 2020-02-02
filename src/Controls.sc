@@ -27,7 +27,7 @@
 	
 	(method (init)
 		(= gameControls GameControls)
-		(GameControls
+		(gameControls
 			window: gcWin
 			add:
 				iconOk
@@ -47,7 +47,7 @@
 			helpIconItem: iconHelp
 			curIcon: iconSave
 			okButton: iconOk
-			state: 2048
+			state: NOCLICKHELP
 		)
 	)
 )
@@ -55,61 +55,58 @@
 (instance gcWin of BorderWindow
 	(properties)
 	
-	(method (open &tmp temp0 [ofStr 25] gcPri)
-		(= gcPri -1)
+	(method (open &tmp temp0 [ofStr 25] priority)
+		(= priority -1)
 		(self
-			top: (/ (- 200 (+ (CelHigh vControlIcons 1 1) 6)) 2)
-			left: (/ (- 320 (+ 151 (CelWide vControlIcons 0 1))) 2)
+			top: (/ (- SCRNHIGH (+ (CelHigh vControlIcons lControlFixtures 1) 6)) 2)
+			left: (/ (- SCRNWIDE (+ 151 (CelWide vControlIcons lSliderText 1))) 2)
 			bottom:
 				(+
-					(CelHigh vControlIcons 1 1)
+					(CelHigh vControlIcons lControlFixtures 1)
 					6
-					(/ (- 200 (+ (CelHigh vControlIcons 1 1) 6)) 2)
+					(/ (- SCRNHIGH (+ (CelHigh vControlIcons lControlFixtures 1) 6)) 2)
 				)
 			right:
 				(+
 					151
-					(CelWide vControlIcons 0 1)
-					(/ (- 320 (+ 151 (CelWide vControlIcons 0 1))) 2)
+					(CelWide vControlIcons lSliderText 1)
+					(/ (- SCRNWIDE (+ 151 (CelWide vControlIcons lSliderText 1))) 2)
 				)
-			priority: gcPri
+			priority: priority
 		)
 		(super open:)
-		(DrawCel
-			vControlIcons
-			0
-			5
+		(DrawCel vControlIcons lSliderText 5
 			(+
 				(/
 					(-
-						(- (+ 151 (CelWide vControlIcons 0 1)) (+ 4 (CelWide vControlIcons 1 1)))
-						(CelWide vControlIcons 0 5)
+						(- (+ 151 (CelWide vControlIcons lSliderText 1)) (+ 4 (CelWide vControlIcons lControlFixtures 1)))
+						(CelWide vControlIcons lSliderText 5)
 					)
 					2
 				)
 				4
-				(CelWide vControlIcons 1 1)
+				(CelWide vControlIcons lControlFixtures 1)
 			)
 			3
-			gcPri
+			priority
 		)
-		(DrawCel vControlIcons 1 1 4 3 gcPri)
-		(DrawCel vControlIcons 1 0 94 38 gcPri)
-		(DrawCel vControlIcons 1 0 135 38 gcPri)
+		(DrawCel vControlIcons lControlFixtures 1 4 3 priority)
+		(DrawCel vControlIcons lControlFixtures 0 94 38 priority)
+		(DrawCel vControlIcons lControlFixtures 0 135 38 priority)
 		(DrawCel
 			vControlIcons lSliderText 4 63
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
-			gcPri
+			priority
 		)
 		(DrawCel
 			vControlIcons lSliderText 3 101
-			(- (- 37 (+ (CelHigh vControlIcons 0 4) 3)) 9)
-			gcPri
+			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
+			priority
 		)
 		(DrawCel
 			vControlIcons lSliderText 2 146
-			(- (- 37 (+ (CelHigh vControlIcons 0 4) 3)) 9)
-			gcPri
+			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
+			priority
 		)
 		(Graph GShowBits 12 1 15 (+ 151 (CelWide vControlIcons lSliderText 1)) 1)
 		(SetPort 0)
@@ -316,8 +313,7 @@
 				(DrawCel vControlIcons lCurrentMode 2 188 141 -1)
 			)
 		)
-		(Graph GShowBits
-			141 188
+		(Graph GShowBits 141 188
 			(+ 141 (CelHigh vControlIcons lCurrentMode))
 			(+ 188 (CelWide vControlIcons lCurrentMode))
 			1

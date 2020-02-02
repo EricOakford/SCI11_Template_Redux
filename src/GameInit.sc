@@ -39,8 +39,8 @@
 		;check the current driver and determine if it is VGA or not
 		(if
 			(and
-				(>= (= colorCount (Graph GDetect)) 2)
-				(<= colorCount 16)
+				(>= (= numColors (Graph GDetect)) 2)
+				(<= numColors 16)
 			)
 			;if 16 colors or less, it's not VGA
 			(= isVGA FALSE)
@@ -84,7 +84,7 @@
 		(= scoreFont 9)
 		(= possibleScore 999)
 		(= score 0)
-		(= musicChannels (DoSound NumVoices))
+		(= numVoices (DoSound NumVoices))
 		(= debugging TRUE)	;Set this to FALSE to disable the debug features
 		(theIconBar enable:)	
 		;now go to the speed test room

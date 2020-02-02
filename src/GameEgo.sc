@@ -67,7 +67,7 @@
 			(theGame setCursor: oldCur TRUE)
 		else
 		;if ego has no items, bring up the message saying so.
-			(messager say: N_EGO 0 C_INVEMPTY 0 0 GAME_EGO)
+			(messager say: N_EGO NULL C_INVEMPTY 0 0 GAME_EGO)
 		)
 	)
 )

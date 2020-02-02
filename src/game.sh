@@ -70,7 +70,13 @@
 )
 
 ;Sound defines
+(define sDeath 10)
 (define sPoints 950)
+
+;Death reasons
+(enum 1
+	deathGENERIC
+)
 
 ;Event flags
 (enum

@@ -39,6 +39,8 @@
 	Btst 3
 	AddPolygonsToRoom 4
 	CreateNewPolygon 5
+	Face 6
+	EgoDead 7
 )
 
 (local
@@ -119,9 +121,9 @@
 	walkHandler
 	textSpeed =  2
 	altPolyList
-	global96
-	global97
-	global98
+		global96
+		global97
+		global98
 	lastSysGlobal
 	myTextColor
 	myBackColor
@@ -133,12 +135,13 @@
 	soundFx
 	theMusic
 	globalSound
-	checkedIcons
+	disabledIcons
 	scoreFont
-	colorCount
-	musicChannels
-	[gameFlags 10]
+	numColors
+	numVoices
 	theStopGroop
+	deathReason	
+	[gameFlags 10]
 )
 
 (procedure (Bset flagEnum)
@@ -264,6 +267,38 @@
 	)
 )
 
+(procedure (Face actor1 actor2 both whoToCue &tmp ang1To2 theX theY i)
+	;This makes one actor face another.
+	(= i 0)
+	(if (IsObject actor2)
+		(= theX (actor2 x?))
+		(= theY (actor2 y?))
+		(if (== argc 3) (= i both))
+	else
+		(= theX actor2)
+		(= theY both)
+		(if (== argc 4) (= i whoToCue))
+	)
+	(= ang1To2
+		(GetAngle (actor1 x?) (actor1 y?) theX theY)
+	)
+	(actor1
+		setHeading: ang1To2 (if (IsObject i) i else 0)
+	)
+)
+
+(procedure (EgoDead theReason)
+	;This procedure handles when ego dies. It closely matches that of SQ4, SQ5 and KQ6.
+	;If a specific message is not given, the game will use a default message.
+	(if (not argc)
+		(= deathReason deathGENERIC)
+	else
+		(= deathReason theReason)
+	)
+	(curRoom newRoom: DEATH)
+)
+
+
 (class SCI11 kindof Game
 	; The main game class. It's a subclass of Game and adds game-specific functionality.
 	
@@ -364,7 +399,7 @@
 						(`#2	;KEY_F2
 							(cond 
 								((theGame masterVolume:) (theGame masterVolume: 0))
-								((> musicChannels 1) (theGame masterVolume: 15))
+								((> numVoices 1) (theGame masterVolume: 15))
 								(else (theGame masterVolume: 1))
 							)
 							(event claimed: TRUE)
@@ -413,7 +448,7 @@
 	)
 		
 	(method (handsOff)
-		(user canInput: TRUE, canControl: FALSE)
+		(user canInput: FALSE canControl: FALSE)
 		(theIconBar eachElementDo: #perform checkIcon)
 		(theIconBar curIcon: (theIconBar at: ICON_CONTROL))
 		(theIconBar disable: ICON_WALK ICON_LOOK ICON_DO ICON_TALK ICON_CURITEM ICON_INVENTORY)
@@ -421,7 +456,7 @@
 	)
 	
 	(method (handsOn)
-		(user canInput: TRUE, canControl: TRUE)
+		(user canInput: TRUE canControl: TRUE)
 		(theIconBar enable: ICON_WALK ICON_LOOK ICON_DO ICON_TALK ICON_CURITEM ICON_INVENTORY)
 		(if (not (curRoom inset:)) (theIconBar enable: ICON_CONTROL))
 		(if (not (theIconBar curInvIcon?))
@@ -443,8 +478,9 @@
 		;It checks if a certain flag is set so that the points are awarded only once.
 		(if (not (Btst flagEnum))
 			(= score (+ score points))
+			(statusCode doit: curRoomNum)			
 			(Bset flagEnum)
-			(soundFx number: sPoints loop: 1 flags: mNOPAUSE play:)
+			(pointsSound number: sPoints loop: 1 flags: mNOPAUSE play:)
 		)
 	)		
 	
@@ -459,6 +495,7 @@
 	
 	(method (restart)
 		;the game's restart dialog
+		(if modelessDialog (modelessDialog dispose:))
 		(if
 			(Print
 				font:		userFont
@@ -469,13 +506,14 @@
 				addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
 				init:
 			)
-			(super restart:)
+			(super restart: &rest)
 		)
 	)
 
 	(method (quitGame)
 		;the game's quit dialog
-		(= quit
+		(if modelessDialog (modelessDialog dispose:))		
+		(if
 			(Print
 				font:		userFont
 				width:		100
@@ -486,6 +524,7 @@
 				init:
 			)
 		)
+		(super quitGame: &rest)
 	)
 	
 	(method (pragmaFail)
@@ -513,16 +552,16 @@
 (instance statusCode of Code
 	(properties)
 	
-	(method (doit roomNum &tmp [strg 50] [scoreStr 50])
+	(method (doit roomNum &tmp [statusBuf 50] [scoreBuf 50])
 		(if
 			;add rooms where the status line is not shown
 			(not (OneOf roomNum 
-					TITLE SPEED_TEST WHERE_TO
+					TITLE SPEED_TEST WHERE_TO DEATH
 				 )
 			)
-		(Message MsgGet MAIN N_STATUSLINE 0 0 1 @strg)
-		(Format @scoreStr @strg score possibleScore)
-		(DrawStatus @scoreStr 23 0)
+		(Message MsgGet MAIN N_STATUSLINE 0 0 1 @statusBuf)
+		(Format @scoreBuf @statusBuf score possibleScore)
+		(DrawStatus @scoreBuf 23 0)
 		)
 	)
 )
@@ -570,19 +609,23 @@
 (instance theGlobalSound of Sound)
 (instance musicSound of Sound)
 (instance soundEffects of Sound)
-
+(instance pointsSound of Sound
+	(properties
+		priority 15
+	)
+)
 
 (instance checkIcon of Code
 	(properties)
 	
-	(method (doit param1)
+	(method (doit theIcon)
 		(if
 			(and
-				(param1 isKindOf: IconItem)
-				(& (param1 signal?) RELVERIFY)
+				(theIcon isKindOf: IconItem)
+				(& (theIcon signal?) DISABLED)
 			)
-			(= checkedIcons
-				(| checkedIcons (>> $8000 (theIconBar indexOf: param1)))
+			(= disabledIcons
+				(| disabledIcons (>> $8000 (theIconBar indexOf: theIcon)))
 			)
 		)
 	)

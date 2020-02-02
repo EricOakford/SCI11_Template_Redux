@@ -33,7 +33,7 @@
 			useIconItem: iconUseIt
 			helpIconItem: iconHelp
 			walkIconItem: iconWalk
-			state: 3072			
+			state: (| OPENIFONME NOCLICKHELP)		
 		)
 	)
 )

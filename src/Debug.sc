@@ -31,7 +31,7 @@
 	[local0 27]
 	invDButton
 )
-(procedure (localproc_0052)
+(procedure (noScrolling)
 	(if (OneOf (curRoom style?) 11 12 13 14)
 		(curRoom drawPic: (curRoom picture?) 100 style: 100)
 	)
@@ -53,7 +53,7 @@
 		(DisposeScript DEBUG)
 	)
 	
-	(method (handleEvent event &tmp [str 160] temp160 newEvent i temp163 temp164 temp165 temp166 temp167 temp168 temp169 temp170 temp171 temp172 temp173 [temp174 4] temp178)
+	(method (handleEvent event &tmp [str 160] oldPort evt i temp163 obj temp165 temp166 temp167 temp168 temp169 temp170 temp171 temp172 temp173 [temp174 4] oldCur)
 		(switch (event type?)
 			(keyDown
 				(event claimed: TRUE)
@@ -61,21 +61,21 @@
 					(`@a
 						(= i (cast first:))
 						(while i
-							(= temp164 (NodeValue i))
+							(= obj (NodeValue i))
 							(Format @str
 								{class: %s\nview: %d\nloop: %d\ncel: %d\nposn: %d %d %d\nheading: %d\npri: %d\nsignal: $%x\nillBits: $%x\n}
-								((temp164 -super-?) name?)
-								(temp164 view?)
-								(temp164 loop?)
-								(temp164 cel?)
-								(temp164 x?)
-								(temp164 y?)
-								(temp164 z?)
-								(temp164 heading?)
-								(temp164 priority?)
-								(temp164 signal?)
-								(if (temp164 isKindOf: Actor)
-									(temp164 illegalBits?)
+								((obj -super-?) name?)
+								(obj view?)
+								(obj loop?)
+								(obj cel?)
+								(obj x?)
+								(obj y?)
+								(obj z?)
+								(obj heading?)
+								(obj priority?)
+								(obj signal?)
+								(if (obj isKindOf: Actor)
+									(obj illegalBits?)
 								else
 									-1
 								)
@@ -85,11 +85,11 @@
 									(Print
 										addText: @str
 										window: SysWindow
-										addTitle: (temp164 name?)
+										addTitle: (obj name?)
 										addIcon:
-											(temp164 view?)
-											(temp164 loop?)
-											(temp164 cel?)
+											(obj view?)
+											(obj loop?)
+											(obj cel?)
 											(+ (Print x?) 80)
 											(Print y?)
 										init:
@@ -104,7 +104,7 @@
 						(PolygonEditor doit:)
 					)
 					(`@c
-						(localproc_0052)
+						(noScrolling)
 						(Show CMAP)
 					)
 					(`@d
@@ -153,7 +153,7 @@
 					(`@j						
 					)
 					(`@k
-						(= temp160 (GetPort))
+						(= oldPort (GetPort))
 						(SetPort 0)
 						(= temp171 5)
 						(= temp172 16)
@@ -182,17 +182,17 @@
 						(repeat
 							(if
 								(or
-									(== ((= newEvent (Event new:)) type?) mouseDown)
-									(== (newEvent type?) keyDown)
+									(== ((= evt (Event new:)) type?) mouseDown)
+									(== (evt type?) keyDown)
 								)
 								(break)
 							)
-							(newEvent dispose:)
+							(evt dispose:)
 						)
-						(newEvent dispose:)
+						(evt dispose:)
 						(Graph GRestoreBits temp165)
 						(Graph GShowBits temp167 temp168 temp170 temp169 1)
-						(SetPort temp160)
+						(SetPort oldPort)
 					)
 					(`@l
 						(= str 0)
@@ -214,7 +214,7 @@
 						((ScriptID LOGGER) doit: @sysLogPath 0)
 					)
 					(`@p
-						(localproc_0052)
+						(noScrolling)
 						(Show PMAP)
 					)
 					(`@q
@@ -292,25 +292,25 @@
 			)
 			(mouseDown
 				(switch (event modifiers?)
-					(13 0)
+					(ENTER 0)
 					(14 0)
 					(12
 						(event claimed: TRUE)
 						(Format @str DEBUG 2 (event x?) (event y?))
-						(= temp160
+						(= oldPort
 							(Print
 								posn: 160 10
 								font: 999
-								modeless: 1
+								modeless: TRUE
 								addText: @str
 								init:
 							)
 						)
-						(while (!= 2 ((= newEvent (Event new:)) type?))
-							(newEvent dispose:)
+						(while (!= 2 ((= evt (Event new:)) type?))
+							(evt dispose:)
 						)
-						(newEvent dispose:)
-						(temp160 dispose:)
+						(evt dispose:)
+						(oldPort dispose:)
 					)
 					(5
 						(event type: keyDown message: 4864)
@@ -323,7 +323,7 @@
 					(ctrlDown 0)
 					(altDown
 						(event claimed: TRUE)
-						(= temp178 (theGame setCursor: INVIS_CURSOR))
+						(= oldCur (theGame setCursor: INVIS_CURSOR))
 ;;;						(= i
 ;;;							((= temp173
 ;;;								(if gTheNewDButtonValue else (User alterEgo?))
@@ -332,13 +332,13 @@
 ;;;							)
 ;;;						)
 						(temp173 startUpd:)
-						(while (!= 2 ((= newEvent (Event new:)) type?))
-							(temp173 x: (newEvent x?) y: (- (newEvent y?) 10))
+						(while (!= 2 ((= evt (Event new:)) type?))
+							(temp173 x: (evt x?) y: (- (evt y?) 10))
 							(Animate (cast elements?) 0)
-							(newEvent dispose:)
+							(evt dispose:)
 						)
-						(newEvent dispose:)
-						(theGame setCursor: temp178)
+						(evt dispose:)
+						(theGame setCursor: oldCur)
 						(temp173 signal: i)
 					)
 				)
