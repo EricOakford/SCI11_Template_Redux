@@ -15,7 +15,6 @@
 
 
 (class GameWindow kindof BorderWindow
-	(properties)
 	
 	(method (open)
 		;Customize the window here

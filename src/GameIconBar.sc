@@ -18,7 +18,6 @@
 )
 
 (instance iconCode of Code
-	(properties)
 	
 	(method (init)
 		(= theIconBar IconBar)

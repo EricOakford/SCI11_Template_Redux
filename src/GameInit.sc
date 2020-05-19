@@ -27,7 +27,6 @@
 )
 
 (instance GameInitCode of Code
-	(properties)
 	
 	(method (init)
 		;When you quit the game, a random message will appear at the DOS prompt.

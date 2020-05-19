@@ -2,7 +2,7 @@
 ;
 ;	 MAIN.SC
 ;
-;	 This is the main game script. It contains the main game class and all the global variables.
+;	 This is the main game script. It contains the main game instance and all the global variables.
 ;	
 ;	 In addition to the above, it contains the crucial default Messager
 ;	 and its findTalker method (used for mapping talker numbers to a Talker or Narrator instance).
@@ -299,14 +299,14 @@
 )
 
 
-(class SCI11 kindof Game
-	; The main game class. It's a subclass of Game and adds game-specific functionality.
+(instance SCI11 kindof Game
+	; The main game instance. It adds game-specific functionality.
 	
 	(properties
 		printLang ENGLISH	;set your game's language here. Supported languages can be found in SYSTEM.SH.
 	)
 
-	(method (init &tmp [mD 22])
+	(method (init)
 		;load some important modules
 		Print
 		BorderWindow
@@ -331,9 +331,21 @@
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
 		(= theStopGroop stopGroop)	
-		(theMusic owner: self flags: mNOPAUSE init:)
-		(globalSound owner: self flags: mNOPAUSE init:)
-		(soundFx owner: self flags:	mNOPAUSE init:)
+		(theMusic
+			owner: self
+			flags: mNOPAUSE
+			init:
+		)
+		(globalSound
+			owner: self
+			flags: mNOPAUSE
+			init:
+		)
+		(soundFx
+			owner: self
+			flags: mNOPAUSE
+			init:
+		)
 		(keyDownHandler addToFront:	self)
 		(mouseDownHandler addToFront: self)		
 		(= waitCursor theWaitCursor)
@@ -349,21 +361,6 @@
 		
 		(statusCode doit: roomNum)
 		((ScriptID DISPOSE_CODE 0) doit: roomNum)
-		;EO: despite what the message will say, the memory is NOT fragmented.
-		;Disabling the message until I can find a way to prevent it from
-		;appearing when changing rooms.
-;;;		(if
-;;;			(and
-;;;				(!= (- (MemoryInfo FreeHeap) 2) (MemoryInfo LargestPtr))
-;;;				(Print
-;;;					addText: N_MEM_FRAGMENTED 0 0 0 1 0 MAIN
-;;;					addButton: FALSE N_MEM_FRAGMENTED 0 0 2 0 12 MAIN
-;;;					addButton: TRUE N_MEM_FRAGMENTED 0 0 3 70 12 MAIN
-;;;					init:
-;;;				)
-;;;			)
-;;;			(SetDebug)
-;;;		)
 		(super startRoom: roomNum)
 		(if
 			(and
@@ -387,7 +384,9 @@
 					(switch (event message?)
 						(TAB
 							(if (not (& ((theIconBar at: ICON_INVENTORY) signal?) DISABLED))
-								(if fastCast (return fastCast))
+								(if fastCast
+									(return fastCast)
+								)
 								(ego showInv:)
 								(event claimed: TRUE)
 							)
@@ -398,22 +397,32 @@
 						)
 						(`#2	;KEY_F2
 							(cond 
-								((theGame masterVolume:) (theGame masterVolume: 0))
-								((> numVoices 1) (theGame masterVolume: 15))
-								(else (theGame masterVolume: 1))
+								((theGame masterVolume:)
+									(theGame masterVolume: 0)
+								)
+								((> numVoices 1)
+									(theGame masterVolume: 15)
+								)
+								(else
+									(theGame masterVolume: 1)
+								)
 							)
 							(event claimed: TRUE)
 						)
 						(`#5	;KEY_F5
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
-								(if fastCast (return fastCast))
+								(if fastCast
+									(return fastCast)
+								)
 								(theGame save:)
 								(event claimed: TRUE)
 							)
 						)
 						(`#6	;KEY_F7
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
-								(if fastCast (return fastCast))
+								(if fastCast
+									(return fastCast)
+								)
 								(theGame restore:)
 								(event claimed: TRUE)
 							)
@@ -451,14 +460,30 @@
 		(user canInput: FALSE canControl: FALSE)
 		(theIconBar eachElementDo: #perform checkIcon)
 		(theIconBar curIcon: (theIconBar at: ICON_CONTROL))
-		(theIconBar disable: ICON_WALK ICON_LOOK ICON_DO ICON_TALK ICON_CURITEM ICON_INVENTORY)
+		(theIconBar disable:
+			ICON_WALK
+			ICON_LOOK
+			ICON_DO
+			ICON_TALK
+			ICON_CURITEM
+			ICON_INVENTORY
+		)
 		(self setCursor: waitCursor TRUE)
 	)
 	
 	(method (handsOn)
 		(user canInput: TRUE canControl: TRUE)
-		(theIconBar enable: ICON_WALK ICON_LOOK ICON_DO ICON_TALK ICON_CURITEM ICON_INVENTORY)
-		(if (not (curRoom inset:)) (theIconBar enable: ICON_CONTROL))
+		(theIconBar enable:
+			ICON_WALK
+			ICON_LOOK
+			ICON_DO
+			ICON_TALK
+			ICON_CURITEM
+			ICON_INVENTORY
+		)
+		(if (not (curRoom inset:))
+			(theIconBar enable: ICON_CONTROL)
+		)
 		(if (not (theIconBar curInvIcon?))
 			(theIconBar disable: ICON_CURITEM)	
 		)	
@@ -495,7 +520,9 @@
 	
 	(method (restart)
 		;the game's restart dialog
-		(if modelessDialog (modelessDialog dispose:))
+		(if modelessDialog
+			(modelessDialog dispose:)
+		)
 		(if
 			(Print
 				font:		userFont
@@ -512,7 +539,9 @@
 
 	(method (quitGame)
 		;the game's quit dialog
-		(if modelessDialog (modelessDialog dispose:))		
+		(if modelessDialog
+			(modelessDialog dispose:)
+		)		
 		(if
 			(Print
 				font:		userFont
@@ -529,7 +558,9 @@
 	
 	(method (pragmaFail)
 		;nobody responds to user input
-		(if modelessDialog (modelessDialog dispose:))
+		(if modelessDialog
+			(modelessDialog dispose:)
+		)
 		(if (User canControl:)
 			(switch ((user curEvent?) message?)
 				(V_DO
@@ -550,7 +581,6 @@
 )
 
 (instance statusCode of Code
-	(properties)
 	
 	(method (doit roomNum &tmp [statusBuf 50] [scoreBuf 50])
 		(if
@@ -559,15 +589,14 @@
 					TITLE SPEED_TEST WHERE_TO DEATH
 				 )
 			)
-		(Message MsgGet MAIN N_STATUSLINE 0 0 1 @statusBuf)
-		(Format @scoreBuf @statusBuf score possibleScore)
-		(DrawStatus @scoreBuf 23 0)
+			(Message MsgGet MAIN N_STATUSLINE 0 0 1 @statusBuf)
+			(Format @scoreBuf @statusBuf score possibleScore)
+			(DrawStatus @scoreBuf 23 0)
 		)
 	)
 )
 
 (instance gameMessager of Messager
-	(properties)
 	
 	(method (findTalker who &tmp theTalker)
 		(if
@@ -590,10 +619,18 @@
 	
 	(method (doit theVerb)
 		(cond 
-			((== theVerb V_LOOK) (messager say: N_VERB_GENERIC V_LOOK NULL 1 0 MAIN))
-			((== theVerb V_DO) (messager say: N_VERB_GENERIC V_DO NULL 1 0 MAIN))
-			((== theVerb V_TALK) (messager say: N_VERB_GENERIC V_TALK NULL 1 0 MAIN))
-			(else (theGame pragmaFail:))
+			((== theVerb V_LOOK)
+				(messager say: N_VERB_GENERIC V_LOOK NULL 1 0 MAIN)
+			)
+			((== theVerb V_DO)
+				(messager say: N_VERB_GENERIC V_DO NULL 1 0 MAIN)
+			)
+			((== theVerb V_TALK)
+				(messager say: N_VERB_GENERIC V_TALK NULL 1 0 MAIN)
+			)
+			(else
+				(theGame pragmaFail:)
+			)
 		)
 	)
 )
@@ -616,7 +653,6 @@
 )
 
 (instance checkIcon of Code
-	(properties)
 	
 	(method (doit theIcon)
 		(if

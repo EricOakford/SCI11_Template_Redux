@@ -11,7 +11,4 @@
 (use Main)
 (use Game)
 
-(class GameRoom kindof Room
-	(properties)
-
-)
+(class GameRoom kindof Room)

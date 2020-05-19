@@ -36,7 +36,9 @@
 			)
 		)
 		(= nextRoom TITLE)
-		(if str (= nextRoom (ReadNumber @str)))
+		(if str
+			(= nextRoom (ReadNumber @str))
+		)
 		(theGame setCursor: normalCursor)
 		(self newRoom: nextRoom)
 	)

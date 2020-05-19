@@ -21,7 +21,7 @@
 
 (local
 	distance
-	endTime
+	doneTime
 )
 
 (instance speedRoom of Room
@@ -53,7 +53,6 @@
 )
 
 (instance speedTest of Script
-	(properties)
 	
 	(method (changeState newState)
 		(switch (= state newState)
@@ -69,12 +68,12 @@
 				(= cycles 1)
 			)
 			(1
-				(= endTime (GetTime))
+				(= doneTime (GetTime))
 				(fred setMotion: MoveTo 320 190)
 				(= cycles 50)
 			)
 			(2
-				(= distance (- (GetTime) endTime))
+				(= distance (- (GetTime) doneTime))
 				(startGame doit:)
 			)
 		)
@@ -82,7 +81,6 @@
 )
 
 (instance startGame of Code
-	(properties)
 	
 	(method (doit &tmp nextRoom)
 		(if debugging
@@ -90,25 +88,57 @@
 			else (= nextRoom TITLE)
 		)		
 		(cond 
-			((> distance 160) (= howFast 0))
-			((> distance 150) (= howFast 1))
-			((> distance 140) (= howFast 2))
-			((> distance 130) (= howFast 3))
-			((> distance 120) (= howFast 4))
-			((> distance 110) (= howFast 5))
-			((> distance 100) (= howFast 6))
-			((> distance 90) (= howFast 7))
-			((> distance 80) (= howFast 8))
-			((> distance 70) (= howFast 9))
-			((> distance 60) (= howFast 10))
-			((> distance 50) (= howFast 11))
-			((> distance 40) (= howFast 12))
-			((> distance 30) (= howFast 13))
-			((> distance 20) (= howFast 14))
-			(else (= howFast 15))
+			((> distance 160)
+				(= howFast 0)
+			)
+			((> distance 150)
+				(= howFast 1)
+			)
+			((> distance 140)
+				(= howFast 2)
+			)
+			((> distance 130)
+				(= howFast 3)
+			)
+			((> distance 120)
+				(= howFast 4)
+			)
+			((> distance 110)
+				(= howFast 5)
+			)
+			((> distance 100)
+				(= howFast 6)
+			)
+			((> distance 90)
+				(= howFast 7)
+			)
+			((> distance 80)
+				(= howFast 8)
+			)
+			((> distance 70)
+				(= howFast 9)
+			)
+			((> distance 60)
+				(= howFast 10)
+			)
+			((> distance 50)
+				(= howFast 11)
+			)
+			((> distance 40)
+				(= howFast 12)
+			)
+			((> distance 30)
+				(= howFast 13)
+			)
+			((> distance 20)
+				(= howFast 14)
+			)
+			(else
+				(= howFast 15)
+			)
 		)
-		(theGame
-			detailLevel: (cond 
+		(theGame detailLevel:
+			(cond 
 				((<= howFast 3) 1)
 				((<= howFast 10) 2)
 				(else 3)

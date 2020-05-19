@@ -16,8 +16,7 @@
 )
 
 (instance aboutCode of Code
-	(properties)
-	
+
 	(method (doit &tmp [str 300])
 		(= normalCursor ((theIconBar curIcon?) cursor?))
 		(theGame setCursor: ARROW_CURSOR)

@@ -38,7 +38,6 @@
 
 (instance invCode of Code
 	;This code initializes the game's inventory
-	(properties)
 	
 	(method (init)
 		(= inventory Inventory)
@@ -243,6 +242,4 @@
 	)
 )
 
-(instance genericCursor of Cursor
-	(properties)
-)
+(instance genericCursor of Cursor)

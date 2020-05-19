@@ -24,6 +24,12 @@
 	deathRoom 0
 )
 
+(enum
+	waitABit
+	setItUp
+	showMessage
+)
+
 (local
 	msgX
 	msgY
@@ -41,66 +47,85 @@
 		style FADEOUT
 	)
 	
-	(method (init &tmp case)
+	(method (init)
 		(theMusic fade:)
 		(globalSound fade:)
 		(theIconBar disable:)
 		(theGame setCursor: ARROW_CURSOR TRUE)
 		(super init:)
-		(deathMusic number: sDeath play:)
-		;set the message and title based on the reason for death
-		(= case
-			(switch deathReason
-				(deathGENERIC C_GENERIC)
-				(else C_GENERIC)
+		(curRoom setScript: deathScript)
+	)
+)
+
+(instance deathScript of Script
+	
+	(method (changeState newState &tmp case)
+		(= state newState)
+		(switch state
+			(waitABit
+				(ego hide:)
+				(= cycles 2)
 			)
-		)
-		(= deadView
-			(switch deathReason
-				(deathGENERIC vDeathSkull)
-				(else vDeathSkull)
+			(setItUp
+				;set the message and title based on the reason for death
+				(= case
+					(switch deathReason
+						(deathGENERIC C_GENERIC)
+						(else C_GENERIC)
+					)
+				)
+				(= deadView
+					(switch deathReason
+						(deathGENERIC vDeathSkull)
+						(else vDeathSkull)
+					)
+				)	
+				;adjust the text box's size based on the title, message, and icon
+				(= msgX (+ (CelWide deadView) 10))
+				(TextSize @titleLen N_DEATH NULL case 2)
+				(TextSize @msgLen N_DEATH NULL case 1 userFont (- 240 msgX))		
+				(= msgY (+ (- [titleLen 2] [titleLen 0]) 10))
+				(= height
+					(+
+						(Max
+							(+ (- [msgLen 2] [msgLen 0]) 10)					
+							(CelHigh deadView)
+						)
+						msgY
+						10
+					)
+				)
+				(deathMusic number: sDeath play:)
+				(= cycles 2)
 			)
-		)	
-		;adjust the text box's size based on the title, message, and icon
-		(= msgX (+ (CelWide deadView) 10))
-		(TextSize @titleLen N_DEATH NULL case 2)
-		(TextSize @msgLen N_DEATH NULL case 1 userFont (- 240 msgX))		
-		(= msgY (+ (- [titleLen 2] [titleLen 0]) 10))
-		(= height
-			(+
-				(Max
-					(+ (- [msgLen 2] [msgLen 0]) 10)					
-					(CelHigh deadView)
-				)
-				msgY
-				10
-			)
-		)
-		(repeat
-			(switch
-				(Print
-					;print the title
-					font: SYSFONT
-					addText: N_DEATH NULL case 2
-					;show the icon
-					addIcon: deadView deadLoop deadCel 0 msgY
-					;print the message
-					font: smallFont
-					addText: N_DEATH NULL case 1 msgX msgY
-					addButton: 1 N_DEATH 0 C_RESTORE 1 0 height
-					addButton: 2 N_DEATH 0 C_RESTART 1 100 height
-					addButton: 3 N_DEATH 0 C_QUIT 1 200 height
-					init:
-				)
-				(1
-					(theGame restore:)
-				)
-				(2
-					(theGame restart:)
-				)
-				(3
-					(= quit TRUE)
-					(break)
+			(showMessage
+				(repeat
+					(switch
+						(Print
+							;print the title
+							font: SYSFONT
+							addText: N_DEATH NULL case 2
+							;show the icon
+							addIcon: deadView deadLoop deadCel 0 msgY
+							;print the message
+							font: smallFont
+							addText: N_DEATH NULL case 1 msgX msgY
+							addButton: 1 N_DEATH 0 C_RESTORE 1 0 height
+							addButton: 2 N_DEATH 0 C_RESTART 1 100 height
+							addButton: 3 N_DEATH 0 C_QUIT 1 200 height
+							init:
+						)
+						(1
+							(theGame restore:)
+						)
+						(2
+							(theGame restart:)
+						)
+						(3
+							(= quit TRUE)
+							(break)
+						)
+					)
 				)
 			)
 		)

@@ -54,15 +54,17 @@
 (define	TESTROOM		110)
 
 ; Indices for the icons in the icon bar
-(define ICON_WALK 			0)
-(define ICON_LOOK			1)
-(define ICON_DO				2)
-(define ICON_TALK			3)
-(define ICON_CUSTOM			4)
-(define ICON_CURITEM		5)
-(define ICON_INVENTORY		6)
-(define ICON_CONTROL		7)
-(define ICON_HELP			8)
+(enum
+	ICON_WALK
+	ICON_LOOK
+	ICON_DO
+	ICON_TALK
+	ICON_CUSTOM
+	ICON_CURITEM
+	ICON_INVENTORY
+	ICON_CONTROL
+	ICON_HELP
+)
 
 ;Inventory items
 (enum

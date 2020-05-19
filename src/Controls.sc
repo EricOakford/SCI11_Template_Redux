@@ -23,7 +23,6 @@
 )
 
 (instance gcCode of Code
-	(properties)
 	
 	(method (init)
 		(= gameControls GameControls)
@@ -53,9 +52,8 @@
 )
 
 (instance gcWin of BorderWindow
-	(properties)
 	
-	(method (open &tmp temp0 [ofStr 25] priority)
+	(method (open &tmp [ofStr 25] priority)
 		(= priority -1)
 		(self
 			top: (/ (- SCRNHIGH (+ (CelHigh vControlIcons lControlFixtures 1) 6)) 2)
@@ -172,7 +170,9 @@
 	)
 	
 	(method (move)
-		(if (user controls?) (super move: &rest))
+		(if (user controls?)
+			(super move: &rest)
+		)
 	)
 )
 

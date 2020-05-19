@@ -28,18 +28,16 @@
 )
 
 (local
-	[local0 27]
 	invDButton
 )
 (procedure (noScrolling)
-	(if (OneOf (curRoom style?) 11 12 13 14)
-		(curRoom drawPic: (curRoom picture?) 100 style: 100)
+	(if (OneOf (curRoom style?) SCROLLRIGHT SCROLLLEFT SCROLLUP SCROLLDOWN)
+		(curRoom drawPic: (curRoom picture?) 100 style: PLAIN)
 	)
 )
 
 (instance debugHandler of Feature
-	(properties)
-	
+
 	(method (init)
 		(super init:)
 		(mouseDownHandler addToFront: self)
@@ -138,8 +136,7 @@
 								([ego i] name?)
 							)
 						else
-							(Format
-								@str
+							(Format @str
 								{ Global %d: %d_}
 								i
 								[ego i]
@@ -244,14 +241,23 @@
 					(`@s
 					)
 					(`@t
-						(if modelessDialog (modelessDialog dispose:))
+						(if modelessDialog
+							(modelessDialog dispose:)
+						)
 						(if (> (= i (GetNumber {Teleport to})) 0)
 							(curRoom newRoom: i)
 						)
 					)
 					(`@u
 						(User canInput: TRUE canControl: TRUE)
-						(theIconBar enable: ICON_WALK ICON_LOOK ICON_DO ICON_TALK ICON_CURITEM ICON_INVENTORY)
+						(theIconBar enable:
+							ICON_WALK
+							ICON_LOOK
+							ICON_DO
+							ICON_TALK
+							ICON_CURITEM
+							ICON_INVENTORY
+						)
 					)
 					(`@v
 						(Show VMAP)
@@ -348,7 +354,6 @@
 )
 
 (instance dInvD of Dialog
-	(properties)
 	
 	(method (init &tmp theX theY temp2 ret newDText inventoryFirst temp6)
 		(= temp2 (= theX (= theY 4)))
@@ -426,31 +431,33 @@
 		(self eachElementDo: #dispose 1 dispose:)
 	)
 	
-	(method (handleEvent event &tmp eventMessage eventType)
-		(= eventMessage (event message?))
-		(switch (= eventType (event type?))
+	(method (handleEvent event &tmp eMsg eType)
+		(= eMsg (event message?))
+		(switch (= eType (event type?))
 			(keyDown
-				(switch eventMessage
-					(UPARROW (= eventMessage 3840))
+				(switch eMsg
+					(UPARROW
+						(= eMsg SHIFTTAB)
+					)
 					(DOWNARROW
-						(= eventMessage 9)
+						(= eMsg TAB)
 					)
 				)
 			)
 			(direction
-				(switch eventMessage
+				(switch eMsg
 					(dirN
-						(= eventMessage 3840)
-						(= eventType keyDown)
+						(= eMsg SHIFTTAB)
+						(= eType keyDown)
 					)
 					(dirS
-						(= eventMessage 9)
-						(= eventType keyDown)
+						(= eMsg TAB)
+						(= eType keyDown)
 					)
 				)
 			)
 		)
-		(event type: eventType message: eventMessage)
+		(event type: eType message: eMsg)
 		(super handleEvent: event)
 	)
 )
