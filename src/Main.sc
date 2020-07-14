@@ -139,7 +139,7 @@
 	scoreFont
 	numColors
 	numVoices
-	theStopGroop
+	egoLooper
 	deathReason	
 	[gameFlags 10]
 )
@@ -330,7 +330,7 @@
 		(= soundFx soundEffects)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
-		(= theStopGroop stopGroop)	
+		(= egoLooper stopGroop)	
 		(theMusic
 			owner: self
 			flags: mNOPAUSE
@@ -391,11 +391,11 @@
 								(event claimed: TRUE)
 							)
 						)
-						(`^q	;KEY_CONTROL
+						(`^q
 							(theGame quitGame:)
 							(event claimed: TRUE)
 						)
-						(`#2	;KEY_F2
+						(`#2
 							(cond 
 								((theGame masterVolume:)
 									(theGame masterVolume: 0)
@@ -409,7 +409,7 @@
 							)
 							(event claimed: TRUE)
 						)
-						(`#5	;KEY_F5
+						(`#5
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
 								(if fastCast
 									(return fastCast)
@@ -418,7 +418,7 @@
 								(event claimed: TRUE)
 							)
 						)
-						(`#6	;KEY_F7
+						(`#6
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
 								(if fastCast
 									(return fastCast)

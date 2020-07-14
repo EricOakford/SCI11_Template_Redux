@@ -41,13 +41,14 @@
 		(= view (if argc theView else vEgo))
 		(ego
 			setLoop: -1
+			looper: egoLooper
 			setCel: -1
 			setPri: -1
 			setMotion: 0
 			setCycle: StopWalk -1
 			z: 0
 			illegalBits: 0
-			ignoreActors: 0
+			ignoreActors: FALSE
 		)
 	)
 
