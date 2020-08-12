@@ -331,6 +331,7 @@
 		(= soundFx soundEffects)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
+		(= approachCode gameApproachCode)
 		(= egoLooper stopGroop)
 		(= handsOffCode gameHandsOff)
 		(= handsOnCode gameHandsOn)
@@ -612,6 +613,19 @@
 			(messager say: N_VERB_GENERIC theVerb NULL 1 0 MAIN)
 		else ;non-handled verb
 			(messager say: N_VERB_GENERIC V_COMBINE NULL 1 0 MAIN)
+		)
+	)
+)
+
+(instance gameApproachCode of Code
+	
+	(method (doit theVerb)
+		(switch theVerb
+			(V_LOOK $0001)
+			(V_TALK $0002)
+			(V_WALK $0004)
+			(V_DO $0008)
+			(else  $8000)
 		)
 	)
 )
