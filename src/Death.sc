@@ -119,7 +119,7 @@
 							(theGame restore:)
 						)
 						(2
-							(theGame restart:)
+							(theGame restart: TRUE)
 						)
 						(3
 							(= quit TRUE)

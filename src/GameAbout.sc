@@ -15,17 +15,21 @@
 	aboutCode 0
 )
 
+(local
+	oldCur
+)
+
 (instance aboutCode of Code
 
-	(method (doit &tmp [str 300])
-		(= normalCursor ((theIconBar curIcon?) cursor?))
+	(method (doit)
+		(= oldCur ((theIconBar curIcon?) cursor?))
 		(theGame setCursor: ARROW_CURSOR)
 		(messager say: N_ABOUT NULL NULL NULL NULL GAME_ABOUT)
 		(self dispose:)
 	)
 	
 	(method (dispose)
-		(theGame setCursor: normalCursor)
+		(theGame setCursor: oldCur)
 		(DisposeScript DCICON)
 		(DisposeScript GAME_ABOUT)
 	)

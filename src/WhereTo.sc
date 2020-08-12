@@ -24,13 +24,11 @@
 	
 	(method (init &tmp [str 10] nextRoom temp11)
 		(super init:)
-		(= normalCursor ((theIconBar curIcon?) cursor?))
-		(theGame setCursor: ARROW_CURSOR TRUE 201 126)
 		(= str 0)
 		(= nextRoom 0)
 		(= nextRoom
 			(Print
-				addText: N_ROOM 0 C_WHERETO 1 0 0 SPEED_TEST
+				addText: N_ROOM NULL C_WHERETO 1 0 0 SPEED_TEST
 				addEdit: @str 5 115 0
 				init:
 			)
@@ -39,7 +37,6 @@
 		(if str
 			(= nextRoom (ReadNumber @str))
 		)
-		(theGame setCursor: normalCursor)
 		(self newRoom: nextRoom)
 	)
 )

@@ -29,10 +29,11 @@
 			eachElementDo: #init
 			eachElementDo: #lowlightColor 5
 			eachElementDo: #modNum GAME_ICONBAR
+			curIcon: iconWalk
 			useIconItem: iconUseIt
 			helpIconItem: iconHelp
 			walkIconItem: iconWalk
-			state: (| OPENIFONME NOCLICKHELP)		
+			state: (| OPENIFONME NOCLICKHELP)
 		)
 	)
 )

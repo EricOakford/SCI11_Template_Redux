@@ -136,6 +136,7 @@
 	theMusic
 	globalSound
 	disabledIcons
+	oldCurIcon
 	scoreFont
 	numColors
 	numVoices
@@ -330,7 +331,9 @@
 		(= soundFx soundEffects)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
-		(= egoLooper stopGroop)	
+		(= egoLooper stopGroop)
+		(= handsOffCode gameHandsOff)
+		(= handsOnCode gameHandsOn)
 		(theMusic
 			owner: self
 			flags: mNOPAUSE
@@ -347,7 +350,8 @@
 			init:
 		)
 		(keyDownHandler addToFront:	self)
-		(mouseDownHandler addToFront: self)		
+		(mouseDownHandler addToFront: self)
+		(= normalCursor theArrowCursor)		
 		(= waitCursor theWaitCursor)
 
 		;anything not requiring objects in this script is loaded in GAME_INIT.SC
@@ -358,22 +362,11 @@
 		(if debugging
 			((ScriptID DEBUG 0) init:)
 		)
-		
 		(statusCode doit: roomNum)
 		((ScriptID DISPOSE_CODE 0) doit: roomNum)
+		(ego normalize:)
 		(super startRoom: roomNum)
-		(if
-			(and
-				(ego cycler?)
-				(not (ego looper?))
-				((ego cycler?) isKindOf: StopWalk)
-			)
-			(ego setLoop: stopGroop)
-		)
-		(if (== (theIconBar curIcon?) (theIconBar at: ICON_CURITEM))
-			(theIconBar curIcon: (theIconBar at: ICON_WALK))
-		)	
-	)	
+	)
 
 	(method (handleEvent event &tmp oldCur)
 		(super handleEvent: event)
@@ -394,6 +387,15 @@
 						(`^q
 							(theGame quitGame:)
 							(event claimed: TRUE)
+						)
+						(`^c
+							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
+								(if fastCast
+									(return fastCast)
+								)
+								(theGame showControls:)
+								(event claimed: TRUE)
+							)
 						)
 						(`#2
 							(cond 
@@ -455,47 +457,16 @@
 		)
 		(return oldCurObj)
 	)
-		
-	(method (handsOff)
-		(user canInput: FALSE canControl: FALSE)
-		(theIconBar eachElementDo: #perform checkIcon)
-		(theIconBar curIcon: (theIconBar at: ICON_CONTROL))
-		(theIconBar disable:
-			ICON_WALK
-			ICON_LOOK
-			ICON_DO
-			ICON_TALK
-			ICON_CURITEM
-			ICON_INVENTORY
-		)
-		(self setCursor: waitCursor TRUE)
-	)
 	
-	(method (handsOn)
-		(user canInput: TRUE canControl: TRUE)
-		(theIconBar enable:
-			ICON_WALK
-			ICON_LOOK
-			ICON_DO
-			ICON_TALK
-			ICON_CURITEM
-			ICON_INVENTORY
-		)
-		(if (not (curRoom inset:))
-			(theIconBar enable: ICON_CONTROL)
-		)
-		(if (not (theIconBar curInvIcon?))
-			(theIconBar disable: ICON_CURITEM)	
-		)	
-		(self setCursor: normalCursor TRUE)
-	)
-	
-	(method (showControls)
+	(method (showControls &tmp oldCur)
 		(theIconBar hide:)
+		(= oldCur ((theIconBar curIcon?) cursor?))
+		(theGame setCursor: normalCursor TRUE)
 		(gameControls
 			window: (ScriptID GAME_CONTROLS 1)
 			show:
 		)
+		(theGame setCursor: oldCur TRUE)		
 	)
 	
 	(method (solvePuzzle flagEnum points)
@@ -505,7 +476,12 @@
 			(= score (+ score points))
 			(statusCode doit: curRoomNum)			
 			(Bset flagEnum)
-			(pointsSound number: sPoints loop: 1 flags: mNOPAUSE play:)
+			(pointsSound
+				number: sPoints
+				loop: 1
+				flags: mNOPAUSE
+				play:
+			)
 		)
 	)		
 	
@@ -513,68 +489,83 @@
 		((ScriptID GAME_ABOUT 0) doit:)
 		(DisposeScript GAME_ABOUT)
 	)
-	;this will allow for digital sound volume to be adjusted	
+	
 	(method (masterAudioVolume newVol)
-		(if argc (DoAudio Volume newVol) else (DoAudio Volume))
+		;this will allow for digital sound volume to be adjusted
+		(if argc
+			(DoAudio Volume newVol)
+		else
+			(DoAudio Volume)
+		)
 	)
 	
-	(method (restart)
-		;the game's restart dialog
-		(if modelessDialog
-			(modelessDialog dispose:)
-		)
-		(if
-			(Print
-				font:		userFont
-				width:		100
-				mode:		teJustCenter
-				addText:	N_RESTART NULL NULL 1 0 0 MAIN
-				addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-				addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
-				init:
+	(method (restart &tmp oldCur)
+		;if a parameter is given, skip the dialog and restart immediately
+		(if argc
+			(super restart:)
+		else
+			;the game's restart dialog
+			(= oldCur ((theIconBar curIcon?) cursor?))
+			(theGame setCursor: normalCursor)		
+			(if modelessDialog
+				(modelessDialog dispose:)
 			)
-			(super restart: &rest)
+			(if
+				(Print
+					font:		userFont
+					width:		100
+					mode:		teJustCenter
+					addText:	N_RESTART NULL NULL 1 0 0 MAIN
+					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
+					addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
+					init:
+				)
+				(super restart:)
+			else
+				(theGame setCursor: oldCur)
+			)
 		)
 	)
 
-	(method (quitGame)
+	(method (quitGame &tmp oldCur)
+		;if a parameter is given, skip the dialog and quit immediately		
+		(if argc
+			(super quitGame:)
+		else
 		;the game's quit dialog
-		(if modelessDialog
-			(modelessDialog dispose:)
-		)		
-		(if
-			(Print
-				font:		userFont
-				width:		100
-				mode:		teJustCenter
-				addText:	N_QUITGAME NULL NULL 1 0 0 MAIN
-				addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-				addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
-				init:
+			(= oldCur ((theIconBar curIcon?) cursor?))
+			(theGame setCursor: normalCursor)		
+			(if modelessDialog
+				(modelessDialog dispose:)
+			)		
+			(if
+				(Print
+					font:		userFont
+					width:		100
+					mode:		teJustCenter
+					addText:	N_QUITGAME NULL NULL 1 0 0 MAIN
+					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
+					addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
+					init:
+				)
+				(super quitGame:)
+			else
+				(theGame setCursor: oldCur)
 			)
 		)
-		(super quitGame: &rest)
 	)
 	
-	(method (pragmaFail)
+	(method (pragmaFail &tmp theVerb)
 		;nobody responds to user input
 		(if modelessDialog
 			(modelessDialog dispose:)
 		)
-		(if (User canControl:)
-			(switch ((user curEvent?) message?)
-				(V_DO
-					(messager say: N_PRAGFAIL V_DO 0 1 0 MAIN)
-				)
-				(V_LOOK
-					(messager say: N_PRAGFAIL V_LOOK 0 1 0 MAIN)
-				)
-				(V_TALK
-					(messager say: N_PRAGFAIL V_TALK 0 1 0 MAIN)
-				)
-				(else 
-					(messager say: N_PRAGFAIL V_COMBINE 0 1 0 MAIN)
-				)
+		(if (User canInput:)
+			(= theVerb ((User curEvent?) message?))
+			(if (OneOf theVerb V_DO V_LOOK V_TALK)
+				(messager say: N_PRAGFAIL theVerb NULL 1 0 MAIN)
+			else ;non-handled verb
+				(messager say: N_PRAGFAIL V_COMBINE NULL 1 0 MAIN)
 			)
 		)
 	)
@@ -615,23 +606,74 @@
 )
 
 (instance gameDoVerbCode of Code
-	(properties)
-	
+	;if there is no corresponding message for an object and verb, bring up a default message.
 	(method (doit theVerb)
-		(cond 
-			((== theVerb V_LOOK)
-				(messager say: N_VERB_GENERIC V_LOOK NULL 1 0 MAIN)
-			)
-			((== theVerb V_DO)
-				(messager say: N_VERB_GENERIC V_DO NULL 1 0 MAIN)
-			)
-			((== theVerb V_TALK)
-				(messager say: N_VERB_GENERIC V_TALK NULL 1 0 MAIN)
-			)
-			(else
-				(theGame pragmaFail:)
+		(if (OneOf theVerb V_LOOK V_DO V_TALK)
+			(messager say: N_VERB_GENERIC theVerb NULL 1 0 MAIN)
+		else ;non-handled verb
+			(messager say: N_VERB_GENERIC V_COMBINE NULL 1 0 MAIN)
+		)
+	)
+)
+
+(instance gameHandsOff of Code
+	
+	(method (doit)
+		(if (not oldCurIcon)
+			(= oldCurIcon (theIconBar curIcon?))
+		)
+		(user canControl: FALSE canInput: FALSE)
+		(ego setMotion: 0)
+		(= disabledIcons NULL)
+		(theIconBar eachElementDo: #perform checkIcon)
+		(theIconBar curIcon: (theIconBar at: ICON_CONTROL))
+		(theIconBar disable:
+			ICON_WALK
+			ICON_LOOK
+			ICON_DO
+			ICON_TALK
+			ICON_CURITEM
+			ICON_INVENTORY
+		)
+		(if (not (HaveMouse))
+			(theGame setCursor: INVIS_CURSOR)
+		else
+			(theGame setCursor: waitCursor)
+		)
+	)
+)
+
+(instance gameHandsOn of Code
+	
+	(method (doit)
+		(user canInput: TRUE canControl: TRUE)
+		(theIconBar enable:
+			ICON_WALK
+			ICON_LOOK
+			ICON_DO
+			ICON_TALK
+			ICON_CURITEM
+			ICON_INVENTORY
+		)
+		(if (not (curRoom inset:))
+			(theIconBar enable: ICON_CONTROL)
+		)
+		(if (not (theIconBar curInvIcon?))
+			(theIconBar disable: ICON_CURITEM)	
+		)
+		(if oldCurIcon
+			(theIconBar curIcon: oldCurIcon)
+			(theGame setCursor: (oldCurIcon cursor?))
+			(if
+				(and
+					(== (theIconBar curIcon?) (theIconBar at: ICON_CURITEM))
+					(not (theIconBar curInvIcon?))
+				)
+				(theIconBar advanceCurIcon:)
 			)
 		)
+		(= oldCurIcon 0)
+		(theGame setCursor: ((theIconBar curIcon?) cursor?) TRUE)
 	)
 )
 
@@ -640,6 +682,12 @@
 (instance theWaitCursor of Cursor
 	(properties
 		view	HAND_CURSOR
+	)
+)
+
+(instance theArrowCursor of Cursor
+	(properties
+		view	ARROW_CURSOR
 	)
 )
 
@@ -661,7 +709,7 @@
 				(& (theIcon signal?) DISABLED)
 			)
 			(= disabledIcons
-				(| disabledIcons (>> $8000 (theIconBar indexOf: theIcon)))
+				(| disabledIcons (>> FORCE (theIconBar indexOf: theIcon)))
 			)
 		)
 	)

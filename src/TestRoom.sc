@@ -36,7 +36,7 @@
 				(ego posn: 150 130)
 			)
 		)
-		(ego init: normalize:)
+		(ego init:)
 		; We just came from the title screen, so we need to call this to give control
 		; to the player.
 		(theGame handsOn:)

@@ -34,6 +34,19 @@
 		(Message MsgGet MAIN N_QUIT_STR 0 0 (Random 1 4) @quitStr)
 		(SetQuitStr @quitStr)
 		
+		; These correspond to font codes used in messages.
+		; By default, render messages in font 0 (system font).
+		; Render messages with the |f1| tag in userFont (default 1).
+		; Render messages with the |f2| tag in smallFont (default 4).
+		; Render messages with the |f3| tag in font 1307.		
+		(TextFonts SYSFONT userFont smallFont 1307)
+		; These correspond to color codes used in messages (values into global palette).
+		; By default, render messages as color 0.
+		; Render messages with the |c1| tag as color 15.
+		; Render messages with the |c2| tag as color 23.
+		; Render messages with the |c3| tag as color 5.		
+		(TextColors 0 15 23 5)
+		
 		;set up the colors
 		;check the current driver and determine if it is VGA or not
 		(if
