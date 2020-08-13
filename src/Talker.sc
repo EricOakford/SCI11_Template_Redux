@@ -196,9 +196,10 @@
 		(return strLength)
 	)
 
-   (method (display theBuf &tmp theWidth theWin)
+   (method (display theBuf &tmp theWidth theWin [textBuffer 500])	;EO: textBuffer added for speech/text
 
 		; Open a window & display the text
+		;ERIC WAS HERE!
 
 		(if (> (+ x talkWidth) 318)
 			(= theWidth (- 318 x))
@@ -210,14 +211,15 @@
 			color:		color,
 			back:			back
 		)
-		(if (and	(not (HaveMouse))
-					(!= theCursor INVIS_CURSOR)
-				)
-			(= saveCursor theCursor)
-			(theGame setCursor: INVIS_CURSOR)
-		else
-			(= saveCursor 0)
-		)
+		;EO: commented out to ensure correct cursor is restored
+;;;		(if (and	(not (HaveMouse))
+;;;					(!= theCursor INVIS_CURSOR)
+;;;				)
+;;;			(= saveCursor theCursor)
+;;;			(theGame setCursor: INVIS_CURSOR)
+;;;		else
+;;;			(= saveCursor 0)
+;;;		)
 		(if showTitle
 			(Print addTitle: name)
 		)
@@ -226,10 +228,26 @@
 			posn:			x y,
 			font:			font,
 			width:		theWidth,
-			addText:		theBuf,
-			modeless:	TRUE,
-			init:
+			;addText:		theBuf,
+			modeless:	TRUE
+			;init:
 		)
+		;EO: This allows for simultaneous speech and text
+		(if (& msgType CD_MSG)
+			(Message
+				MsgGet
+				(WordAt theBuf 0)
+				(WordAt theBuf 1)
+				(WordAt theBuf 2)
+				(WordAt theBuf 3)
+				(WordAt theBuf 4)
+				@textBuffer
+			)
+			(Print addText: @textBuffer)
+		else
+			(Print addText: theBuf)
+		)
+		(Print init:)
    )
 
 	(method (startAudio theKeys &tmp m n v c s)
@@ -521,23 +539,26 @@
 		)
 	)
 
-   (method (display theBuf &tmp theLoop theWidth textLeft theWin)
+   (method (display theBuf &tmp theLoop theWidth textLeft theWin [textBuffer 500])	;EO: textBuffer added for speech/text
 
 		; Open a window & display the text, with an icon for the talker if
 		;	it is a 'viewInPrint' talker
+		;ERIC WAS HERE!
 
 		((= theWin (systemWindow new:))
 			color:		color,
 			back:			back
 		)
-		(if (and	(not (HaveMouse))
-					(!= theCursor INVIS_CURSOR)
-				)
-			(= saveCursor theCursor)
-			(theGame setCursor: INVIS_CURSOR)
-		else
-			(= saveCursor 0)
-		)
+		
+		;EO: commented out to ensure correct cursor is restored
+;;;		(if (and	(not (HaveMouse))
+;;;					(!= theCursor INVIS_CURSOR)
+;;;				)
+;;;			(= saveCursor theCursor)
+;;;			(theGame setCursor: INVIS_CURSOR)
+;;;		else
+;;;			(= saveCursor 0)
+;;;		)
       (if viewInPrint
 			(= theLoop (if useFrame loop else (bust loop?)))
 			(if showTitle
@@ -574,10 +595,27 @@
 				posn:			(+ x textX) (+ y textY),
 				modeless:	TRUE,
 				font:			font,
-				width:		theWidth,
-				addText:		theBuf,
-				init:
+				width:		theWidth
+				;addText:		theBuf,
+				;init:
 			)
+			
+			;EO: This allows for simultaneous speech and text
+			(if (& msgType CD_MSG)
+				(Message
+					MsgGet
+					(WordAt theBuf 0)
+					(WordAt theBuf 1)
+					(WordAt theBuf 2)
+					(WordAt theBuf 3)
+					(WordAt theBuf 4)
+					@textBuffer
+				)
+				(Print addText: @textBuffer)
+			else
+				(Print addText: theBuf)
+			)
+			(Print init:)
 		)
    )
 

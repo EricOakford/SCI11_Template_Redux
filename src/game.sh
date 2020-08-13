@@ -69,6 +69,7 @@
 ;Inventory items
 (enum
 	iMoney
+	iLastInvItem	;this MUST be last
 )
 
 ;Sound defines

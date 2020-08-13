@@ -289,14 +289,11 @@
 				(= msgType CD_MSG)
 			)
 			(CD_MSG
-				(= msgType TEXT_MSG)
-;				(= msgType (| TEXT_MSG CD_MSG))
+				(= msgType (| TEXT_MSG CD_MSG))
 			)
-			;EO: This does not seem to work properly, giving garbage messages when "Both" is selected.
-			;Perhaps the interpreter or stock Messager does not properly support both.
-;			((| TEXT_MSG CD_MSG)
-;				(= msgType TEXT_MSG)
-;			)
+			((| TEXT_MSG CD_MSG)
+				(= msgType TEXT_MSG)
+			)
 		)
 		(self show:)
 	)
