@@ -51,7 +51,7 @@
 		(theMusic fade:)
 		(globalSound fade:)
 		(theIconBar disable:)
-		(theGame setCursor: ARROW_CURSOR TRUE)
+		(theGame setCursor: normalCursor TRUE)
 		(super init:)
 		(curRoom setScript: deathScript)
 	)

@@ -18,6 +18,7 @@
 (use Polygon)
 (use PolyPath)
 (use Timer)
+(use Flags)
 (use Ego)
 (use Osc)
 (use Grooper)
@@ -44,132 +45,143 @@
 )
 
 (local
-	ego
-	theGame
-	curRoom
-	unused_1
-	quit
-	cast
-	regions
-	timers
-	sounds
-	inventory
-	addToPics
-	curRoomNum
-	prevRoomNum
-	newRoomNum
-	debugOn
-	score
-	possibleScore
-	textCode
-	cuees
-	theCursor
-	normalCursor =  ARROW_CURSOR
-	waitCursor =  HAND_CURSOR
-	userFont =  USERFONT
-	smallFont =  4
-	lastEvent
-	modelessDialog
-	bigFont =  USERFONT
-	version
+	ego								  	;pointer to ego
+	theGame							  	;ID of the Game instance
+	curRoom							  	;ID of current room
+	unused_1		
+	quit							  	;when TRUE, quit game
+	cast							  	;collection of actors
+	regions							  	;set of current regions
+	timers							  	;list of timers in the game
+	sounds							  	;set of sounds being played
+	inventory						  	;set of inventory items in game
+	addToPics						  	;list of views added to the picture
+	curRoomNum						  	;current room number
+	prevRoomNum						  	;previous room number
+	newRoomNum						  	;number of room to change to
+	debugOn							  	;generic debug flag -- set from debug menu
+	score							  	;the player's current score
+	possibleScore					  	;highest possible score
+	textCode							;code that handles interactive text
+	cuees							  	;list of who-to-cues for next cycle
+	theCursor						  	;the number of the current cursor
+	normalCursor	=	ARROW_CURSOR	;number of normal cursor form
+	waitCursor		=	HAND_CURSOR 	;cursor number of "wait" cursor
+	userFont		=	USERFONT	  	;font to use for Print
+	smallFont		=	4 			  	;small font for save/restore, etc.
+	lastEvent						  	;the last event (used by save/restore game)
+	modelessDialog					  	;the modeless Dialog known to User and Intrface
+	bigFont			=	USERFONT	  	;large font
+	version			=	0			  	;pointer to 'incver' version string
+										;	WARNING!  Must be set in room 0
+										;	(usually to {x.yyy    } or {x.yyy.zzz})
 	unused_3
-	curSaveDir
+	curSaveDir							;address of current save drive/directory string
 	unused_4
-	perspective
-	features
+	perspective							;player's viewing angle: degrees away
+										;	from vertical along y axis
+	features							;locations that may respond to events
 	unused_5
-	useSortedFeatures
+	useSortedFeatures	=	FALSE		;enable cast & feature sorting?
 	unused_6
-	overlays =  -1
-	doMotionCue
-	systemWindow
+	overlays			=	-1
+	doMotionCue							;a motion cue has occurred - process it
+	systemWindow						;ID of standard system window
 	unused_7
 	unused_8
 	modelessPort
-	[sysLogPath 20]
-	endSysLogPath
-	gameControls
-	ftrInitializer
-	doVerbCode
-	approachCode
-	useObstacles =  TRUE
+	[sysLogPath	20]						;-used for system standard logfile path	
+	endSysLogPath						;/		(uses 20 globals)
+	gameControls						;pointer to instance of game controls
+	ftrInitializer						;pointer to code that gets called from
+										;	a feature's init
+	doVerbCode							;pointer to code that gets invoked if
+										;	no feature claims a user event
+	approachCode						;pointer to code that translates verbs
+										;	into bits
+	useObstacles	=	TRUE			;will Ego use PolyPath or not?
 	unused_9
-	theIconBar
-	mouseX
-	mouseY
-	keyDownHandler
-	mouseDownHandler
-	directionHandler
-	speechHandler
+	theIconBar							;points to TheIconBar or Null	
+	mouseX								;-last known mouse position
+	mouseY								;/
+	keyDownHandler						;-our EventHandlers, get called by game
+	mouseDownHandler					;/
+	directionHandler					;/
+	speechHandler						;a special handler for speech events
 	lastVolume
-	pMouse
-	theDoits
-	eatMice =  60
-	user
-	syncBias
-	theSync
+	pMouse			=	NULL			;pointer to a Pseudo-Mouse, or NULL
+	theDoits		=	NULL			;list of objects to get doits each cycle
+	eatMice			=	60				;how many ticks before we can mouse
+	user			=	NULL			;pointer to specific applications User
+	syncBias							;-globals used by sync.sc
+	theSync								;/		(will be removed shortly)
 	unused_10
-	fastCast
-	inputFont
-	tickOffset
-	howFast
-	gameTime
-	narrator
-	msgType =  TEXT_MSG
-	messager
-	prints
-	walkHandler
-	textSpeed =  2
-	altPolyList
-		global96
-		global97
-		global98
+	fastCast							;list of talkers on screen
+	inputFont		=	SYSFONT			;font used for user type-in
+	tickOffset							;used to adjust gameTime after restore
+	howFast								;measurment of how fast a machine is
+	gameTime							;ticks since game start
+	narrator							;pointer to narrator (normally Narrator)
+	msgType			=	TEXT_MSG		;type of messages used
+	messager							;pointer to messager (normally Messager)
+	prints								;list of Print's on screen
+	walkHandler							;list of objects to get walkEvents
+	textSpeed		=	2				;time text remains on screen
+	altPolyList							;list of alternate obstacles
+	;globals 96-99 are unused
+	global96
+	global97
+	global98
 	lastSysGlobal
-	myTextColor
-	myBackColor
-	myHighlightColor
-	myLowlightColor
-	isVGA
-	debugging
-	statusLine
-	soundFx
-	theMusic
-	globalSound
+	;globals 100 and above are for game use	
+	myTextColor				;color of text in message boxes
+	myBackColor				;color of message boxes
+	myHighlightColor		;color of icon highlight
+	myLowlightColor			;color of icon lowlight
+	isVGA					;is the graphics driver VGA or not?
+	debugging				;debug mode enabled
+	statusLine				;pointer for status line code
+	soundFx					;sound effect being played
+	theMusic				;music object, current playing music
+	globalSound				;ambient sound
 	disabledIcons
 	oldCurIcon
-	scoreFont
-	numColors
-	numVoices
-	egoLooper
-	deathReason	
-	[gameFlags 10]
+	scoreFont				;font for displaying the score in the control panel
+	numColors				;Number of colors supported by graphics driver
+	numVoices				;Number of voices supported by sound driver
+	deathReason				;message to display when calling EgoDead
+	gameFlags				;pointer for Flags object, which only requires one global
 )
 
+;These will be replaced with macro defines once those are supported
 (procedure (Bset flagEnum)
-	(= [gameFlags (/ flagEnum 16)]
-		(|
-			[gameFlags (/ flagEnum 16)]
-			(>> $8000 (mod flagEnum 16))
-		)
-	)
+;;;	(= [gameFlags (/ flagEnum 16)]
+;;;		(|
+;;;			[gameFlags (/ flagEnum 16)]
+;;;			(>> $8000 (mod flagEnum 16))
+;;;		)
+;;;	)
+	(gameFlags set: flagEnum)
 )
 
 (procedure (Bclr flagEnum)
-	(= [gameFlags (/ flagEnum 16)]
-		(&
-			[gameFlags (/ flagEnum 16)]
-			(~ (>> $8000 (mod flagEnum 16)))
-		)
-	)
+;;;	(= [gameFlags (/ flagEnum 16)]
+;;;		(&
+;;;			[gameFlags (/ flagEnum 16)]
+;;;			(~ (>> $8000 (mod flagEnum 16)))
+;;;		)
+;;;	)
+	(gameFlags clear: flagEnum)
 )
 
 (procedure (Btst flagEnum)
-	(return
-		(&
-			[gameFlags (/ flagEnum 16)]
-			(>> $8000 (mod flagEnum 16))
-		)
-	)
+;;;	(return
+;;;		(&
+;;;			[gameFlags (/ flagEnum 16)]
+;;;			(>> $8000 (mod flagEnum 16))
+;;;		)
+;;;	)
+	(gameFlags test: flagEnum)
 )
 
 (procedure (CreateNewPolygonHelper polyBuffer nextPoly &tmp newPoly pointCount)
@@ -244,7 +256,7 @@
 ; 	
 ; 	Example usage::
 ; 	
-; 		(aRock setOnMeCheck: omcPOLYGON (CreateNewPolygon @P_Rock))
+; 		(aRock setOnMeCheck: ftrPolygon (CreateNewPolygon @P_Rock))
 ;
 ; 	The array consists of the following:	
 ; 	
@@ -326,32 +338,30 @@
 		(super init:)
 
 		;Assign globals to this script's objects
-		(= theMusic musicSound)
-		(= globalSound theGlobalSound)
-		(= soundFx soundEffects)
+		((= theMusic musicSound)
+			owner: self
+			flags: mNOPAUSE
+			init:			
+		)
+		((= globalSound theGlobalSound)
+			owner: self
+			flags: mNOPAUSE
+			init:			
+		)
+		((= soundFx soundEffects)
+			owner: self
+			flags: mNOPAUSE
+			init:			
+		)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
 		(= approachCode gameApproachCode)
-		(= egoLooper stopGroop)
 		(= handsOffCode gameHandsOff)
 		(= handsOnCode gameHandsOn)
-		(theMusic
-			owner: self
-			flags: mNOPAUSE
+		(= statusLine statusCode)
+		((= gameFlags gameEventFlags)
 			init:
 		)
-		(globalSound
-			owner: self
-			flags: mNOPAUSE
-			init:
-		)
-		(soundFx
-			owner: self
-			flags: mNOPAUSE
-			init:
-		)
-		(keyDownHandler addToFront:	self)
-		(mouseDownHandler addToFront: self)
 		(= normalCursor theArrowCursor)		
 		(= waitCursor theWaitCursor)
 
@@ -363,7 +373,7 @@
 		(if debugging
 			((ScriptID DEBUG 0) init:)
 		)
-		(statusCode doit: roomNum)
+		(statusLine doit: roomNum)
 		((ScriptID DISPOSE_CODE 0) doit: roomNum)
 		(ego normalize:)
 		(super startRoom: roomNum)
@@ -470,18 +480,23 @@
 		(theGame setCursor: oldCur TRUE)		
 	)
 	
-	(method (solvePuzzle flagEnum points)
+	(method (solvePuzzle pValue pFlag)
 		;Adds an amount to the player's current score.
 		;It checks if a certain flag is set so that the points are awarded only once.
-		(if (not (Btst flagEnum))
-			(= score (+ score points))
-			(statusCode doit: curRoomNum)			
-			(Bset flagEnum)
-			(pointsSound
-				number: sPoints
-				loop: 1
-				flags: mNOPAUSE
-				play:
+		(if (and (> argc 1) (gameFlags test: pFlag))
+			(return)
+		)
+		(if pValue
+			(= score (+ score pValue))
+			(if (and (> argc 1) pFlag)
+				(gameFlags set: pFlag)
+				(statusLine doit: curRoomNum)
+				(pointsSound
+					number: sPoints
+					loop: 1
+					flags: mNOPAUSE
+					play:
+				)
 			)
 		)
 	)		
@@ -581,7 +596,7 @@
 					TITLE SPEED_TEST WHERE_TO DEATH
 				 )
 			)
-			(Message MsgGet MAIN N_STATUSLINE 0 0 1 @statusBuf)
+			(Message MsgGet MAIN N_STATUSLINE NULL NULL 1 @statusBuf)
 			(Format @scoreBuf @statusBuf score possibleScore)
 			(DrawStatus @scoreBuf 23 0)
 		)
@@ -691,7 +706,11 @@
 	)
 )
 
-(instance stopGroop of GradualLooper)
+(instance gameEventFlags of Flags
+	(properties
+		size NUMFLAGS
+	)
+)
 
 (instance theWaitCursor of Cursor
 	(properties

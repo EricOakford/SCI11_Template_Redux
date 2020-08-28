@@ -23,7 +23,7 @@
 
 	(method (doit)
 		(= oldCur ((theIconBar curIcon?) cursor?))
-		(theGame setCursor: ARROW_CURSOR)
+		(theGame setCursor: normalCursor)
 		(messager say: N_ABOUT NULL NULL NULL NULL GAME_ABOUT)
 		(self dispose:)
 	)

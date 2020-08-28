@@ -31,7 +31,7 @@
 	(method (init)
 		;When you quit the game, a random message will appear at the DOS prompt.
 		;Customize these messages in the message editor as you see fit.
-		(Message MsgGet MAIN N_QUIT_STR 0 0 (Random 1 4) @quitStr)
+		(Message MsgGet MAIN N_QUIT_STR NULL NULL (Random 1 4) @quitStr)
 		(SetQuitStr @quitStr)
 		
 		; These correspond to font codes used in messages.
@@ -88,7 +88,7 @@
 			back: myBackColor
 			keepWindow: TRUE
 		)		
-		(User alterEgo: ego canControl: FALSE canInput: FALSE)
+		(user alterEgo: ego canControl: FALSE canInput: FALSE)
 		(= useSortedFeatures TRUE)
 		(= eatMice 30)	
 		

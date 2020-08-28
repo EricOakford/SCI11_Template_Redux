@@ -71,6 +71,7 @@
 	iMoney
 	iLastInvItem	;this MUST be last
 )
+;(define NUM_INVITEMS (- iLastInvItem 1))
 
 ;Sound defines
 (define sDeath 10)
@@ -80,6 +81,14 @@
 (enum 1
 	deathGENERIC
 )
+
+;Flag handler defines
+;NOTE: These are intended to replace the Bset, Btst, and Bclr procedures.
+;However, SCICompanion does not yet support macro defines.
+;;;(define Bset	gameFlags set:)
+;;;(define Btst	gameFlags test:)
+;;;(define Bclr	gameFlags clear:)
+(define NUMFLAGS 128)
 
 ;Event flags
 (enum

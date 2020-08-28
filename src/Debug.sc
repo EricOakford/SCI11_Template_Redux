@@ -51,7 +51,7 @@
 		(DisposeScript DEBUG)
 	)
 	
-	(method (handleEvent event &tmp [str 160] oldPort evt i temp163 obj temp165 temp166 temp167 temp168 temp169 temp170 temp171 temp172 temp173 [temp174 4] oldCur)
+	(method (handleEvent event &tmp [str 160] oldPort evt i obj underbits colorIndex t l b r temp171 temp172 temp173 oldCur)
 		(switch (event type?)
 			(keyDown
 				(event claimed: TRUE)
@@ -154,28 +154,28 @@
 						(SetPort 0)
 						(= temp171 5)
 						(= temp172 16)
-						(= temp167 15)
-						(= temp168 80)
-						(= temp170 (+ temp167 (* 34 temp171)))
-						(= temp169 (+ temp168 (* 10 temp172)))
-						(= temp165
-							(Graph GSaveBits temp167 temp168 temp170 temp169 1)
+						(= t 15)
+						(= l 80)
+						(= r (+ t (* 34 temp171)))
+						(= b (+ l (* 10 temp172)))
+						(= underbits
+							(Graph GSaveBits t l r b VMAP)
 						)
-						(Graph GFillRect temp167 temp168 temp170 temp169 1 255)
-						(= temp166 0)
-						(while (< temp166 256)
+						(Graph GFillRect t l r b 1 255)
+						(= colorIndex 0)
+						(while (< colorIndex 256)
 							(Graph
 								GFillRect
-								(+ temp167 temp171 (* temp171 (/ temp166 8)))
-								(+ temp168 temp172 (* 16 (mod temp166 8)))
-								(+ temp167 temp171 temp171 (* temp171 (/ temp166 8)))
-								(+ temp168 temp172 temp172 (* temp172 (mod temp166 8)))
+								(+ t temp171 (* temp171 (/ colorIndex 8)))
+								(+ l temp172 (* 16 (mod colorIndex 8)))
+								(+ t temp171 temp171 (* temp171 (/ colorIndex 8)))
+								(+ l temp172 temp172 (* temp172 (mod colorIndex 8)))
 								1
-								temp166
+								colorIndex
 							)
-							(++ temp166)
+							(++ colorIndex)
 						)
-						(Graph GShowBits temp167 temp168 temp170 temp169 1)
+						(Graph GShowBits t l r b VMAP)
 						(repeat
 							(if
 								(or
@@ -187,24 +187,24 @@
 							(evt dispose:)
 						)
 						(evt dispose:)
-						(Graph GRestoreBits temp165)
-						(Graph GShowBits temp167 temp168 temp170 temp169 1)
+						(Graph GRestoreBits underbits)
+						(Graph GShowBits t l r b VMAP)
 						(SetPort oldPort)
 					)
 					(`@l
 						(= str 0)
 						(= i (GetNumber {Flag No.}))
-						(Bset i)
+						(gameFlags set: i)
 					)
 					(`@m
 						(= str 0)
 						(= i (GetNumber {Flag No.}))
-						(Bclr i)
+						(gameFlags clear: i)
 					)
 					(`@n
 						(= str 0)
 						(= i (GetNumber {Flag No.}))
-						(Format @str {%d} (Btst i))
+						(Format @str {%d} (gameFlags test: i))
 						(Prints @str)
 					)
 					(`@o
@@ -276,19 +276,46 @@
 					)
 					(`?
 						(Prints
-							{Debug options:______(Page 1 of 5)\n\n___A - Show cast\n___B - Polygon editor\n___C - Show control map\n___D - Dialog editor\n___E - (vacant) \n___F - (vacant)\n___G - Set global\n}
+							{Debug options:______(Page 1 of 5)\n\n
+							___A - Show cast\n
+							___B - Polygon editor\n
+							___C - Show control map\n
+							___D - Dialog editor\n
+							___E - (vacant) \n
+							___F - (vacant)\n
+							___G - Set global\n}
 						)
 						(Prints
-							{Debug options:______(Page 2 of 5)\n\n___H - Show global\n___I - Get inventory item\n___J - (vacant)\n___K - Show palette\n___L - Set flag\n___M - Clear flag\n___N - Show flag\n}
+							{Debug options:______(Page 2 of 5)\n\n
+							___H - Show global\n
+							___I - Get inventory item\n
+							___J - (vacant)\n
+							___K - Show palette\n
+							___L - Set flag\n
+							___M - Clear flag\n
+							___N - Show flag\n}
 						)
 						(Prints
-							{Debug options:______(Page 3 of 5)\n\n___O - QA Note Logger\n___P - Show priority map\n___Q - Set Detail to 1\n___R - Show room info/free memory\n___S - (vacant)\n___T - Teleport\n___U - Give HandsOn\n}
+							{Debug options:______(Page 3 of 5)\n\n
+							___O - QA Note Logger\n
+							___P - Show priority map\n
+							___Q - Set Detail to 1\n
+							___R - Show room info/free memory\n
+							___S - (vacant)\n
+							___T - Teleport\n
+							___U - Give HandsOn\n}
 						)
 						(Prints
-							{Debug options:______(Page 4 of 5)\n\n___V - Show visual map\n___W - Feature writer\n___Y - (vacant)\n___X,Z - Quick quit\n}
+							{Debug options:______(Page 4 of 5)\n\n
+							___V - Show visual map\n
+							___W - Feature writer\n
+							___Y - (vacant)\n
+							___X,Z - Quick quit\n}
 						)
 						(Prints
-							{Debug options:______(Page 5 of 5)\n\n__A=Alt, C=Ctrl, L=Left shift, R=Right shift\n\n__Left click:\n____A_______Move ego\n____CL______Show ego\n____CR______Show room\n____CA______Show position\n}
+							{Debug options:______(Page 5 of 5)\n\n
+							__A=Alt, C=Ctrl, L=Left shift, R=Right shift\n\n
+							__Left click:\n____A_______Move ego\n____CL______Show ego\n____CR______Show room\n____CA______Show position\n}
 						)
 					)
 					(else
@@ -330,13 +357,6 @@
 					(altDown
 						(event claimed: TRUE)
 						(= oldCur (theGame setCursor: INVIS_CURSOR))
-;;;						(= i
-;;;							((= temp173
-;;;								(if gTheNewDButtonValue else (User alterEgo?))
-;;;							)
-;;;								signal?
-;;;							)
-;;;						)
 						(temp173 startUpd:)
 						(while (!= 2 ((= evt (Event new:)) type?))
 							(temp173 x: (evt x?) y: (- (evt y?) 10))
