@@ -28,7 +28,7 @@
 
 (instance GameInitCode of Code
 	
-	(method (init)
+	(method (doit)
 		;When you quit the game, a random message will appear at the DOS prompt.
 		;Customize these messages in the message editor as you see fit.
 		(Message MsgGet MAIN N_QUIT_STR NULL NULL (Random 1 4) @quitStr)
@@ -74,20 +74,13 @@
 			(= myLowlightColor vGREY)
 			(= myHighlightColor vBLACK)
 		)
-		
-		;load up the ego, icon bar, inventory, and control panel
-		((= ego (ScriptID GAME_EGO 0)) view: vEgo)
-		((ScriptID GAME_ICONBAR 0) init:)
-		((ScriptID GAME_INV 0) init:)
-		((ScriptID GAME_CONTROLS 0) init:)	
-		
 		(= userFont USERFONT)
 		(= systemWindow BorderWindow)
 		((= narrator Narrator)
 			font: userFont
 			back: myBackColor
 			keepWindow: TRUE
-		)		
+		)
 		(user alterEgo: ego canControl: FALSE canInput: FALSE)
 		(= useSortedFeatures TRUE)
 		(= eatMice 30)	
@@ -98,7 +91,7 @@
 		(= score 0)
 		(= numVoices (DoSound NumVoices))
 		(= debugging TRUE)	;Set this to FALSE to disable the debug features
-		(theIconBar enable:)	
+		(theIconBar enable:)
 		;now go to the speed test room
 		(theGame
 			setCursor:	(waitCursor posn: 300 180, yourself:),

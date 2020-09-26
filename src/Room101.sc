@@ -27,19 +27,52 @@
 		noun N_ROOM
 	)
 	
-	(method (init)
-		;set up polygons
-		(AddPolygonsToRoom @P_room)
-		(AddPolygonsToRoom @P_lampBase)
-		(AddPolygonsToRoom @P_table)
+	(method (init)		
 		(super init:)
 		(switch prevRoomNum
 			; Add room numbers here to set up the ego when coming from different directions.
 			(else 
-				(ego posn: 150 130)
+				(ego posn: 160 130)
 			)
 		)
-		(ego init: normalize:)
+		;set up polygons
+		;room polygons
+		(curRoom addObstacle:
+			((Polygon new:)
+				type: PContainedAccess
+				init:		
+					61 101
+					2 189
+					319 189
+					259 101
+				yourself:
+			)
+		)
+		;lamp base
+		(curRoom addObstacle:
+			((Polygon new:)
+				type: PBarredAccess
+				init:		
+					232 151
+					249 151
+					249 161
+					232 161
+				yourself:
+			)
+		)
+		;table
+		(curRoom addObstacle:
+			((Polygon new:)
+				type: PBarredAccess
+				init:
+					85 129
+					133 128
+					134 146
+					83 146
+				yourself:
+			)
+		)		
+		(ego init:)
 		; We just came from the title screen, so we need to call this to give control
 		; to the player.
 		(theGame handsOn:)

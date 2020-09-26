@@ -51,7 +51,11 @@
 		(DisposeScript DEBUG)
 	)
 	
-	(method (handleEvent event &tmp [str 160] oldPort evt i obj underbits colorIndex t l b r temp171 temp172 temp173 oldCur)
+	(method (handleEvent event &tmp
+			[str 160] oldPort evt i obj
+			underbits theColor t l r b colorX colorY
+			aObj oldCur
+			)
 		(switch (event type?)
 			(keyDown
 				(event claimed: TRUE)
@@ -60,7 +64,8 @@
 						(= i (cast first:))
 						(while i
 							(= obj (NodeValue i))
-							(Format @str
+							(Format
+								@str
 								{class: %s\nview: %d\nloop: %d\ncel: %d\nposn: %d %d %d\nheading: %d\npri: %d\nsignal: $%x\nillBits: $%x\n}
 								((obj -super-?) name?)
 								(obj view?)
@@ -152,30 +157,30 @@
 					(`@k
 						(= oldPort (GetPort))
 						(SetPort 0)
-						(= temp171 5)
-						(= temp172 16)
+						(= colorX 5)
+						(= colorY 16)
 						(= t 15)
 						(= l 80)
-						(= r (+ t (* 34 temp171)))
-						(= b (+ l (* 10 temp172)))
+						(= b (+ t (* 34 colorX)))
+						(= r (+ l (* 10 colorY)))
 						(= underbits
-							(Graph GSaveBits t l r b VMAP)
+							(Graph GSaveBits t l b r VMAP)
 						)
-						(Graph GFillRect t l r b 1 255)
-						(= colorIndex 0)
-						(while (< colorIndex 256)
+						(Graph GFillRect t l b r 1 255)
+						(= theColor 0)
+						(while (< theColor 256)
 							(Graph
 								GFillRect
-								(+ t temp171 (* temp171 (/ colorIndex 8)))
-								(+ l temp172 (* 16 (mod colorIndex 8)))
-								(+ t temp171 temp171 (* temp171 (/ colorIndex 8)))
-								(+ l temp172 temp172 (* temp172 (mod colorIndex 8)))
+								(+ t colorX (* colorX (/ theColor 8)))
+								(+ l colorY (* 16 (mod theColor 8)))
+								(+ t colorX colorX (* colorX (/ theColor 8)))
+								(+ l colorY colorY (* colorY (mod theColor 8)))
 								1
-								colorIndex
+								theColor
 							)
-							(++ colorIndex)
+							(++ theColor)
 						)
-						(Graph GShowBits t l r b VMAP)
+						(Graph GShowBits t l b r 1)
 						(repeat
 							(if
 								(or
@@ -188,7 +193,7 @@
 						)
 						(evt dispose:)
 						(Graph GRestoreBits underbits)
-						(Graph GShowBits t l r b VMAP)
+						(Graph GShowBits t l b r 1)
 						(SetPort oldPort)
 					)
 					(`@l
@@ -357,15 +362,15 @@
 					(altDown
 						(event claimed: TRUE)
 						(= oldCur (theGame setCursor: INVIS_CURSOR))
-						(temp173 startUpd:)
+						(aObj startUpd:)
 						(while (!= 2 ((= evt (Event new:)) type?))
-							(temp173 x: (evt x?) y: (- (evt y?) 10))
-							(Animate (cast elements?) 0)
+							(aObj x: (evt x?) y: (- (evt y?) 10))
+							(Animate (cast elements?) FALSE)
 							(evt dispose:)
 						)
 						(evt dispose:)
 						(theGame setCursor: oldCur)
-						(temp173 signal: i)
+						(aObj signal: i)
 					)
 				)
 			)

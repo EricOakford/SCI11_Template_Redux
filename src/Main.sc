@@ -11,6 +11,7 @@
 
 (script# MAIN)
 (include game.sh) (include "0.shm")
+(use GameEgo)
 (use BordWind)
 (use Dialog)
 (use Intrface)
@@ -38,8 +39,6 @@
 	Bset 1
 	Bclr 2
 	Btst 3
-	AddPolygonsToRoom 4
-	CreateNewPolygon 5
 	Face 6
 	EgoDead 7
 )
@@ -184,102 +183,6 @@
 	(gameFlags test: flagEnum)
 )
 
-(procedure (CreateNewPolygonHelper polyBuffer nextPoly &tmp newPoly pointCount)
-	(= newPoly (Polygon new:))
-	(= pointCount (Memory MReadWord (+ polyBuffer 2)))
-	(newPoly
-		dynamic: FALSE
-		type: (Memory MReadWord polyBuffer)
-		size: pointCount
-		; Use the points directly from the buffer:
-		points: (+ polyBuffer 4)
-	)
-	; Tell the caller the position of the next poly, if they care:
-	(if (> argc 1)
-		(Memory MWriteWord
-			nextPoly
-			(+ polyBuffer 4 (* 4 pointCount))
-		)
-	)
-	(return newPoly)
-)
-
-;	
-;	 Creates Polygon objects based on the point lists in polyBuffer and adds
-;	 them to the room's obstacles.
-;	
-;	 :param heapPtr polyBuffer: An array with polygon points.
-;	
-;	 Example usage::
-;	
-;	 	(AddPolygonsToRoom @P_ThePolygons)
-;	
-;	 The array begins with a number indicating how many polygons there are. This is followed
-;	 by the following information for each polygon:
-;	
-;	 	- A number expressing the type of the polygon (e.g. PBarredAccess).
-;	 	- A number indicating how many points are in the polygon.
-;	 	- (x y) pairs of numbers for each point.
-;	
-;	 Example::
-;	
-;	 	[P_ThePolygons 19] = [2 PContainedAccess 4 319 189 319 50 0 50 0 189 PBarredAccess 3 319 189 319 50 0 50]
-;	
-;	 See also: :doc:`/polygons`.		
-(procedure (AddPolygonsToRoom polyBuffer &tmp polyCount)
-	(if (u< polyBuffer 100)
-		(Prints {polyBuffer is not a pointer. Polygon ignored.})
-	else
-		(= polyCount (Memory MReadWord polyBuffer))
-		(+= polyBuffer 2)
-		(while polyCount
-			(curRoom
-				addObstacle:
-					(if (== polyCount 1)
-						(CreateNewPolygonHelper polyBuffer)
-					else
-						(CreateNewPolygonHelper polyBuffer @polyBuffer)
-					)
-			)
-			(-- polyCount)
-		)
-	)
-)
-
-;
-; .. function:: CreateNewPolygon(polyBuffer [nextPolyOptional])
-;
-; 	Creates a new polygon object.
-; 	
-; 	:param heapPtr polyBuffer: An array with polygon points.
-; 	:param heapPtr nextPolyOptional: An optional pointer that receives the position of the next polygon in the buffer.
-; 	
-; 	Example usage::
-; 	
-; 		(aRock setOnMeCheck: ftrPolygon (CreateNewPolygon @P_Rock))
-;
-; 	The array consists of the following:	
-; 	
-; 		- A number expressing the type of the polygon (e.g. PBarredAccess).
-; 		- A number indicating how many points are in the polygon.
-; 		- (x y) pairs of numbers for each point.
-; 		
-; 	Example::
-; 	
-; 		[P_Rock 10] = [PContainedAccess 4 319 189 319 50 0 50 0 189]
-; 		
-; 	See also: :doc:`/polygons`.
-(procedure (CreateNewPolygon polyBuffer &tmp polyCount)
-	(if (u< polyBuffer 100)
-		(Prints {polyBuffer is not a pointer. Polygon ignored.})
-		(return NULL)
-	else
-		(= polyCount (Memory MReadWord polyBuffer))
-		(+= polyBuffer 2)
-		(return (CreateNewPolygonHelper polyBuffer &rest))
-	)
-)
-
 (procedure (Face actor1 actor2 both whoToCue &tmp ang1To2 theX theY i)
 	;This makes one actor face another.
 	(= i 0)
@@ -311,6 +214,12 @@
 	(curRoom newRoom: DEATH)
 )
 
+(instance egoObj of GameEgo
+	(properties
+		name {ego}
+		view vEgo
+	)
+)
 
 (instance SCI11 kindof Game
 	; The main game instance. It adds game-specific functionality.
@@ -321,20 +230,12 @@
 
 	(method (init)
 		;load some important modules
+		(= systemWindow BorderWindow)
 		Print
-		BorderWindow
-		DText
 		DButton
-		StopWalk
+		Narrator
 		Polygon
 		PolyPath
-		(ScriptID GAME_EGO)
-		Timer
-		IconBar
-		Inventory
-		(ScriptID SIGHT)
-		Narrator
-		Oscillate
 		(super init:)
 
 		;Assign globals to this script's objects
@@ -365,16 +266,29 @@
 		(= normalCursor theArrowCursor)		
 		(= waitCursor theWaitCursor)
 
-		;anything not requiring objects in this script is loaded in GAME_INIT.SC
-		((ScriptID GAME_INIT 0) init:)
+		;load up the ego, icon bar, inventory, and control panel
+		(= ego egoObj)	
+		((ScriptID GAME_ICONBAR 0) init:)
+		((ScriptID GAME_INV 0) init:)
+		((ScriptID GAME_CONTROLS 0) init:)
+		;anything not requiring objects in this script is loaded in GAME_INIT.SC	
+		((ScriptID GAME_INIT 0) doit:)
 	)
 	
 	(method (startRoom roomNum)
+		((ScriptID DISPOSE_CODE 0) doit: roomNum)
+		(if
+			(and
+				(!= (- (MemoryInfo FreeHeap) 2) (MemoryInfo LargestPtr))
+				(Prints {Memory fragmented.})
+			)
+			(theGame showMem:)
+			(SetDebug)
+		)
 		(if debugging
 			((ScriptID DEBUG 0) init:)
 		)
 		(statusLine doit: roomNum)
-		((ScriptID DISPOSE_CODE 0) doit: roomNum)
 		(ego normalize:)
 		(super startRoom: roomNum)
 	)

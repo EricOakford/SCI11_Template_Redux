@@ -28,7 +28,6 @@
 	)
 	
 	(method (init)
-		(AddPolygonsToRoom @P_Default110)
 		(super init:)
 		(switch prevRoomNum
 			; Add room numbers here to set up the ego when coming from different directions.
@@ -36,6 +35,19 @@
 				(ego posn: 150 130)
 			)
 		)
+		;set up polygons
+		;room poly
+		(curRoom addObstacle:
+			((Polygon new:)
+				type: PContainedAccess
+				init:
+					319 189
+					319 50
+					0 50
+					0 189
+				yourself:
+			)
+		)		
 		(ego init:)
 		; We just came from the title screen, so we need to call this to give control
 		; to the player.
@@ -44,6 +56,9 @@
 
 	(method (doVerb theVerb)
 		(switch theVerb
+			(V_DO
+				(curRoom newRoom: ROOM101)
+			)
 			(else 
 				(super doVerb: theVerb)
 			)

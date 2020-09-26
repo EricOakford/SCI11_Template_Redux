@@ -19,7 +19,7 @@
 	GameEgo 0
 )
 
-(instance GameEgo of Ego
+(class GameEgo of Ego
 	(properties
 		noun N_EGO
 		modNum GAME_EGO
@@ -45,7 +45,7 @@
 			setCel: -1
 			setPri: -1
 			setMotion: 0
-			setCycle: StopWalk -1
+			setCycle: egoStopWalk -1
 			z: 0
 			illegalBits: 0
 			ignoreActors: FALSE
@@ -74,3 +74,5 @@
 )
 
 (instance stopGroop of GradualLooper)
+
+(instance egoStopWalk of StopWalk)
