@@ -41,7 +41,6 @@
 		(= view (if argc theView else vEgo))
 		(ego
 			setLoop: -1
-			looper: stopGroop
 			setCel: -1
 			setPri: -1
 			setMotion: 0
@@ -72,7 +71,5 @@
 		)
 	)
 )
-
-(instance stopGroop of GradualLooper)
 
 (instance egoStopWalk of StopWalk)

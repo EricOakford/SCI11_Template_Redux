@@ -263,6 +263,7 @@
 		((= gameFlags gameEventFlags)
 			init:
 		)
+		((= altPolyList (List new:)) name: {altPolys} add:)
 		(= normalCursor theArrowCursor)		
 		(= waitCursor theWaitCursor)
 
@@ -289,8 +290,15 @@
 			((ScriptID DEBUG 0) init:)
 		)
 		(statusLine doit: roomNum)
-		(ego normalize:)
 		(super startRoom: roomNum)
+		(if
+			(and
+				(ego cycler?)
+				(not (ego looper?))
+				((ego cycler?) isKindOf: StopWalk)
+			)
+			(ego setLoop: stopGroop)
+		)
 	)
 
 	(method (handleEvent event &tmp oldCur)
@@ -401,7 +409,7 @@
 			(return)
 		)
 		(if pValue
-			(= score (+ score pValue))
+			(+= score pValue)
 			(if (and (> argc 1) pFlag)
 				(gameFlags set: pFlag)
 				(statusLine doit: curRoomNum)
@@ -661,3 +669,5 @@
 		)
 	)
 )
+
+(instance stopGroop of GradualLooper)

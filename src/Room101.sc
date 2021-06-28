@@ -72,7 +72,7 @@
 				yourself:
 			)
 		)		
-		(ego init:)
+		(ego init: normalize:)
 		; We just came from the title screen, so we need to call this to give control
 		; to the player.
 		(theGame handsOn:)
