@@ -22,7 +22,7 @@
 		picture pSpeedTest
 	)
 	
-	(method (init &tmp [str 10] nextRoom temp11)
+	(method (init &tmp [str 10] nextRoom)
 		(super init:)
 		(= str 0)
 		(= nextRoom 0)

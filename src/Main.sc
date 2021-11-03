@@ -154,22 +154,12 @@
 
 ;These will be replaced with macro defines once those are supported
 (procedure (Bset flagEnum)
-;;;	(= [gameFlags (/ flagEnum 16)]
-;;;		(|
-;;;			[gameFlags (/ flagEnum 16)]
-;;;			(>> $8000 (mod flagEnum 16))
-;;;		)
-;;;	)
+;;;	(|= [gameFlags (/ flagEnum 16)] (>> $8000 (mod flagEnum 16))
 	(gameFlags set: flagEnum)
 )
 
 (procedure (Bclr flagEnum)
-;;;	(= [gameFlags (/ flagEnum 16)]
-;;;		(&
-;;;			[gameFlags (/ flagEnum 16)]
-;;;			(~ (>> $8000 (mod flagEnum 16)))
-;;;		)
-;;;	)
+;;;	(&= [gameFlags (/ flagEnum 16)] (~ (>> $8000 (mod flagEnum 16))))
 	(gameFlags clear: flagEnum)
 )
 
@@ -241,18 +231,21 @@
 		;Assign globals to this script's objects
 		((= theMusic musicSound)
 			owner: self
-			flags: mNOPAUSE
 			init:			
 		)
 		((= globalSound theGlobalSound)
 			owner: self
-			flags: mNOPAUSE
 			init:			
 		)
 		((= soundFx soundEffects)
 			owner: self
-			flags: mNOPAUSE
 			init:			
+		)
+		(pointsSound
+			owner: self
+			init:
+			setPri: 15
+			setLoop: 1
 		)
 		(= messager gameMessager)
 		(= doVerbCode gameDoVerbCode)
@@ -413,12 +406,7 @@
 			(if (and (> argc 1) pFlag)
 				(gameFlags set: pFlag)
 				(statusLine doit: curRoomNum)
-				(pointsSound
-					number: sPoints
-					loop: 1
-					flags: mNOPAUSE
-					play:
-				)
+				(pointsSound play:)
 			)
 		)
 	)		
@@ -426,15 +414,6 @@
 	(method (showAbout)
 		((ScriptID GAME_ABOUT 0) doit:)
 		(DisposeScript GAME_ABOUT)
-	)
-	
-	(method (masterAudioVolume newVol)
-		;this will allow for digital sound volume to be adjusted
-		(if argc
-			(DoAudio Volume newVol)
-		else
-			(DoAudio Volume)
-		)
 	)
 	
 	(method (restart &tmp oldCur)
@@ -510,7 +489,6 @@
 )
 
 (instance statusCode of Code
-	
 	(method (doit roomNum &tmp [statusBuf 50] [scoreBuf 50])
 		(if
 			;add rooms where the status line is not shown
@@ -526,7 +504,6 @@
 )
 
 (instance gameMessager of Messager
-	
 	(method (findTalker who &tmp theTalker)
 		(if
 			(= theTalker
@@ -555,7 +532,6 @@
 )
 
 (instance gameApproachCode of Code
-	
 	(method (doit theVerb)
 		(switch theVerb
 			(V_LOOK $0001)
@@ -568,7 +544,6 @@
 )
 
 (instance gameHandsOff of Code
-	
 	(method (doit)
 		(if (not oldCurIcon)
 			(= oldCurIcon (theIconBar curIcon?))
@@ -595,7 +570,6 @@
 )
 
 (instance gameHandsOn of Code
-	
 	(method (doit)
 		(user canInput: TRUE canControl: TRUE)
 		(theIconBar enable:
@@ -646,26 +620,36 @@
 	)
 )
 
-(instance theGlobalSound of Sound)
-(instance musicSound of Sound)
-(instance soundEffects of Sound)
+(instance theGlobalSound of Sound
+	(properties
+		flags mNOPAUSE
+	)
+)
+(instance musicSound of Sound
+	(properties
+		flags mNOPAUSE
+	)
+)
+(instance soundEffects of Sound
+	(properties
+		flags mNOPAUSE
+	)
+)
 (instance pointsSound of Sound
 	(properties
-		priority 15
+		number sPoints
+		flags mNOPAUSE
 	)
 )
 
 (instance checkIcon of Code
-	
 	(method (doit theIcon)
 		(if
 			(and
 				(theIcon isKindOf: IconItem)
 				(& (theIcon signal?) DISABLED)
 			)
-			(= disabledIcons
-				(| disabledIcons (>> FORCE (theIconBar indexOf: theIcon)))
-			)
+			(|= disabledIcons (>> $8000 (theIconBar indexOf: theIcon)))
 		)
 	)
 )

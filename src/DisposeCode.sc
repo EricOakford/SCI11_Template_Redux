@@ -16,8 +16,7 @@
 	disposeCode 0
 )
 
-(instance disposeCode of Code
-	
+(instance disposeCode of Code	
 	(method (doit)
 		(LoadMany FALSE
 			;insert talker scripts here

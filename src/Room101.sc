@@ -38,40 +38,10 @@
 		;set up polygons
 		;room polygons
 		(curRoom addObstacle:
-			((Polygon new:)
-				type: PContainedAccess
-				init:		
-					61 101
-					2 189
-					319 189
-					259 101
-				yourself:
-			)
+			(&getpoly {room})
+			(&getpoly {table})
+			(&getpoly {lampBase})
 		)
-		;lamp base
-		(curRoom addObstacle:
-			((Polygon new:)
-				type: PBarredAccess
-				init:		
-					232 151
-					249 151
-					249 161
-					232 161
-				yourself:
-			)
-		)
-		;table
-		(curRoom addObstacle:
-			((Polygon new:)
-				type: PBarredAccess
-				init:
-					85 129
-					133 128
-					134 146
-					83 146
-				yourself:
-			)
-		)		
 		(ego init: normalize:)
 		; We just came from the title screen, so we need to call this to give control
 		; to the player.

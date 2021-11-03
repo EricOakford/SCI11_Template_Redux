@@ -26,8 +26,7 @@
 	GameInitCode 0
 )
 
-(instance GameInitCode of Code
-	
+(instance GameInitCode of Code	
 	(method (doit)
 		;When you quit the game, a random message will appear at the DOS prompt.
 		;Customize these messages in the message editor as you see fit.

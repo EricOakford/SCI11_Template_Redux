@@ -56,9 +56,6 @@
 
 	(method (doVerb theVerb)
 		(switch theVerb
-			(V_DO
-				(curRoom newRoom: ROOM101)
-			)
 			(else 
 				(super doVerb: theVerb)
 			)

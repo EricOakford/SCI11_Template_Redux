@@ -10,7 +10,6 @@
 (include game.sh) (include "5.shm")
 (use Main)
 (use BordWind)
-(use GameWindow)
 (use SlideIcon)
 (use IconBar)
 (use GControl)
@@ -22,11 +21,29 @@
 	gcWin 1
 )
 
+(define BUTTON_X 56)
+(define BUTTON_Y 42)
+(define HEADER_X 80)
+(define INDICATOR_X 70)
+(define INDICATOR_Y 40)
+(define CONTROL_WIDTH 200)
+(define SLIDER_X 130)
+(define SLIDER_Y 73)
+(define MSG_BUTTON_X 190)
+(define MSG_BUTTON_Y 140)
+
+(enum	;header cels
+	celDial
+	celSlider
+	celSpeed
+	celVolume
+	celDetail
+	celPaused
+)
+
 (instance gcCode of Code
-	
 	(method (init)
-		(= gameControls GameControls)
-		(gameControls
+		((= gameControls GameControls)
 			window: gcWin
 			add:
 				iconOk
@@ -52,12 +69,11 @@
 )
 
 (instance gcWin of BorderWindow
-	
 	(method (open &tmp [ofStr 25] priority)
 		(= priority -1)
 		(self
 			top: (/ (- SCRNHIGH (+ (CelHigh vControlIcons lControlFixtures 1) 6)) 2)
-			left: (/ (- SCRNWIDE (+ 151 (CelWide vControlIcons lSliderText 1))) 2)
+			left: (/ (- SCRNWIDE (+ CONTROL_WIDTH (CelWide vControlIcons lSliderText 1))) 2)
 			bottom:
 				(+
 					(CelHigh vControlIcons lControlFixtures 1)
@@ -66,18 +82,18 @@
 				)
 			right:
 				(+
-					151
+					CONTROL_WIDTH
 					(CelWide vControlIcons lSliderText 1)
-					(/ (- SCRNWIDE (+ 151 (CelWide vControlIcons lSliderText 1))) 2)
+					(/ (- SCRNWIDE (+ CONTROL_WIDTH (CelWide vControlIcons lSliderText 1))) 2)
 				)
 			priority: priority
 		)
 		(super open:)
-		(DrawCel vControlIcons lSliderText 5
+		(DrawCel vControlIcons lSliderText celPaused
 			(+
 				(/
 					(-
-						(- (+ 151 (CelWide vControlIcons lSliderText 1)) (+ 4 (CelWide vControlIcons lControlFixtures 1)))
+						(- (+ CONTROL_WIDTH (CelWide vControlIcons lSliderText celSlider)) (+ 4 (CelWide vControlIcons lControlFixtures celSlider)))
 						(CelWide vControlIcons lSliderText 5)
 					)
 					2
@@ -88,25 +104,27 @@
 			3
 			priority
 		)
-		(DrawCel vControlIcons lControlFixtures 1 4 3 priority)
-		(DrawCel vControlIcons lControlFixtures 0 94 38 priority)
-		(DrawCel vControlIcons lControlFixtures 0 135 38 priority)
-		(DrawCel
-			vControlIcons lSliderText 4 63
+		(DrawCel vControlIcons lControlFixtures 1 4 3 priority)	;button holes
+		(DrawCel vControlIcons lControlFixtures 0 INDICATOR_X INDICATOR_Y priority)	;detail indicator
+		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X 50) INDICATOR_Y priority)	;volume indicator
+		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X 100) INDICATOR_Y priority)	;speed indicator
+		
+		(DrawCel	;detail header
+			vControlIcons lSliderText celDetail HEADER_X
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
 			priority
 		)
-		(DrawCel
-			vControlIcons lSliderText 3 101
+		(DrawCel	;volume header
+			vControlIcons lSliderText celVolume (+ HEADER_X 50)
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
 			priority
 		)
-		(DrawCel
-			vControlIcons lSliderText 2 146
+		(DrawCel	;speed header
+			vControlIcons lSliderText celSpeed (+ HEADER_X 100)
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
 			priority
 		)
-		(Graph GShowBits 12 1 15 (+ 151 (CelWide vControlIcons lSliderText 1)) 1)
+		(Graph GShowBits 12 1 15 (+ CONTROL_WIDTH (CelWide vControlIcons lSliderText 1)) 1)
 		(SetPort 0)
 	)
 )
@@ -117,8 +135,8 @@
 		view vControlIcons
 		loop lSliderText
 		cel 1
-		nsLeft 139
-		nsTop 73
+		nsLeft SLIDER_X
+		nsTop SLIDER_Y
 		signal FIXED_POSN
 		noun N_DETAIL
 		helpVerb V_HELP
@@ -133,8 +151,8 @@
 		view vControlIcons
 		loop lSliderText
 		cel 1
-		nsLeft 179
-		nsTop 73
+		nsLeft (+ SLIDER_X 50)
+		nsTop SLIDER_Y
 		signal FIXED_POSN
 		noun N_VOLUME
 		helpVerb V_HELP
@@ -142,14 +160,15 @@
 		topValue 15
 	)
 )
+	
 
 (instance speedSlider of Slider
 	(properties
 		view vControlIcons
 		loop lSliderText
 		cel 1
-		nsLeft 219
-		nsTop 73
+		nsLeft (+ SLIDER_X 100)
+		nsTop SLIDER_Y
 		signal FIXED_POSN
 		noun N_SPEED
 		helpVerb V_HELP
@@ -182,10 +201,10 @@
 		view vControlIcons
 		loop lSaveButton
 		cel 0
-		nsLeft 80
-		nsTop 42
+		nsLeft BUTTON_X
+		nsTop BUTTON_Y
 		noun N_SAVE
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		helpVerb V_HELP
 	)
 )
@@ -195,9 +214,9 @@
 		view vControlIcons
 		loop lRestoreButton
 		cel 0
-		nsLeft 80
-		nsTop 62
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		nsLeft BUTTON_X
+		nsTop (+ BUTTON_Y 20)
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTORE
 		helpVerb V_HELP
 	)
@@ -208,9 +227,9 @@
 		view vControlIcons
 		loop lRestartButton
 		cel 0
-		nsLeft 80
-		nsTop 82
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		nsLeft BUTTON_X
+		nsTop (+ BUTTON_Y 40)
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTART
 		helpVerb V_HELP
 	)
@@ -221,9 +240,9 @@
 		view vControlIcons
 		loop lQuitButton
 		cel 0
-		nsLeft 80
-		nsTop 102
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		nsLeft BUTTON_X
+		nsTop (+ BUTTON_Y 60)
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_QUIT
 		helpVerb V_HELP
 	)
@@ -234,9 +253,9 @@
 		view vControlIcons
 		loop lAboutButton
 		cel 0
-		nsLeft 80
-		nsTop 142
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		nsLeft BUTTON_X
+		nsTop (+ BUTTON_Y 80)
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_ABOUT
 		helpVerb V_HELP
 	)
@@ -247,11 +266,11 @@
 		view vControlIcons
 		loop lHelpButton
 		cel 0
-		nsLeft 106
-		nsTop 142
+		nsLeft (+ BUTTON_X 26)
+		nsTop (+ BUTTON_Y 80)
 		cursor vHelpCursor
 		message V_HELP
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE) ;$0183
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_HELP
 		helpVerb V_HELP
 	)
@@ -262,9 +281,9 @@
 		view vControlIcons
 		loop lOKButton
 		cel 0
-		nsLeft 80
-		nsTop 122
-		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR) ;$01c3
+		nsLeft BUTTON_X
+		nsTop (+ BUTTON_Y 100)
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_OK
 		helpVerb V_HELP
 	)
@@ -278,7 +297,7 @@
 		nsLeft 137
 		nsTop 143
 		cursor ARROW_CURSOR
-		signal $0183
+		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_MSGMODE
 		helpVerb V_HELP
 	)
@@ -291,6 +310,8 @@
 			(CD_MSG
 				(= msgType (| TEXT_MSG CD_MSG))
 			)
+			;The stock system scripts do not properly support both speech and text.
+			;To implement this, I made slight modifications to Narrator:display.
 			((| TEXT_MSG CD_MSG)
 				(= msgType TEXT_MSG)
 			)
@@ -301,18 +322,18 @@
 	(method (show)
 		(switch msgType
 			(TEXT_MSG
-				(DrawCel vControlIcons lCurrentMode 0 188 141 -1)
+				(DrawCel vControlIcons lCurrentMode 0 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 			(CD_MSG
-				(DrawCel vControlIcons lCurrentMode 1 188 141 -1)
+				(DrawCel vControlIcons lCurrentMode 1 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 			((| TEXT_MSG CD_MSG)
-				(DrawCel vControlIcons lCurrentMode 2 188 141 -1)
+				(DrawCel vControlIcons lCurrentMode 2 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 		)
-		(Graph GShowBits 141 188
-			(+ 141 (CelHigh vControlIcons lCurrentMode))
-			(+ 188 (CelWide vControlIcons lCurrentMode))
+		(Graph GShowBits MSG_BUTTON_Y MSG_BUTTON_X
+			(+ MSG_BUTTON_Y (CelHigh vControlIcons lCurrentMode))
+			(+ MSG_BUTTON_X (CelWide vControlIcons lCurrentMode))
 			1
 		)
 		(super show: &rest)
