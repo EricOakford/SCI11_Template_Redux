@@ -17,20 +17,22 @@
 (use System)
 
 (public
-	gcCode 0
+	theGameControls 0
 	gcWin 1
 )
 
-(define BUTTON_X 56)
-(define BUTTON_Y 42)
-(define HEADER_X 80)
-(define INDICATOR_X 70)
-(define INDICATOR_Y 40)
-(define CONTROL_WIDTH 200)
-(define SLIDER_X 130)
-(define SLIDER_Y 73)
-(define MSG_BUTTON_X 190)
-(define MSG_BUTTON_Y 140)
+(define BUTTON_DIST		20)
+(define BUTTON_X		56)
+(define BUTTON_Y		42)
+(define HEADER_X		80)
+(define INDICATOR_X		70)
+(define INDICATOR_Y		40)
+(define CONTROL_WIDTH	200)
+(define SLIDER_DIST		50)
+(define SLIDER_X		130)
+(define SLIDER_Y		73)
+(define MSG_BUTTON_X	190)
+(define MSG_BUTTON_Y	140)
 
 (enum	;header cels
 	celDial
@@ -41,20 +43,52 @@
 	celPaused
 )
 
-(instance gcCode of Code
+(instance theGameControls of GameControls
 	(method (init)
-		((= gameControls GameControls)
+		((= gameControls self)
 			window: gcWin
 			add:
 				iconOk
-				(detailSlider theObj: theGame selector: #detailLevel yourself:)
-				(volumeSlider theObj: theGame selector: #masterVolume yourself:)
-				(speedSlider theObj: ego selector: #setSpeed yourself:)
-				(iconSave theObj: theGame selector: #save yourself:)
-				(iconRestore theObj: theGame selector: #restore yourself:)
-				(iconRestart theObj: theGame selector: #restart yourself:)
-				(iconQuit theObj: theGame selector: #quitGame yourself:)
-				(iconAbout theObj: theGame selector: #showAbout yourself:)
+				(detailSlider
+					theObj: theGame
+					selector: #detailLevel
+					yourself:
+				)
+				(volumeSlider
+					theObj: theGame
+					selector: #masterVolume
+					yourself:
+				)
+				(speedSlider
+					theObj: ego
+					selector: #setSpeed
+					yourself:
+				)
+				(iconSave
+					theObj: theGame
+					selector: #save
+					yourself:
+				)
+				(iconRestore
+					theObj: theGame
+					selector: #restore
+					yourself:
+				)
+				(iconRestart
+					theObj: theGame
+					selector: #restart
+					yourself:
+				)
+				(iconQuit
+					theObj: theGame
+					selector: #quitGame
+					yourself:
+				)
+				(iconAbout
+					theObj: theGame
+					selector: #showAbout
+					yourself:
+				)
 				iconTextSwitch	;comment this out if you do not intend to have speech in your game
 				iconHelp
 			eachElementDo: #highlightColor 40
@@ -106,8 +140,8 @@
 		)
 		(DrawCel vControlIcons lControlFixtures 1 4 3 priority)	;button holes
 		(DrawCel vControlIcons lControlFixtures 0 INDICATOR_X INDICATOR_Y priority)	;detail indicator
-		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X 50) INDICATOR_Y priority)	;volume indicator
-		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X 100) INDICATOR_Y priority)	;speed indicator
+		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X (* SLIDER_DIST 1)) INDICATOR_Y priority)	;volume indicator
+		(DrawCel vControlIcons lControlFixtures 0 (+ INDICATOR_X (* SLIDER_DIST 2)) INDICATOR_Y priority)	;speed indicator
 		
 		(DrawCel	;detail header
 			vControlIcons lSliderText celDetail HEADER_X
@@ -115,12 +149,12 @@
 			priority
 		)
 		(DrawCel	;volume header
-			vControlIcons lSliderText celVolume (+ HEADER_X 50)
+			vControlIcons lSliderText celVolume (+ HEADER_X (* SLIDER_DIST 1))
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
 			priority
 		)
 		(DrawCel	;speed header
-			vControlIcons lSliderText celSpeed (+ HEADER_X 100)
+			vControlIcons lSliderText celSpeed (+ HEADER_X (* SLIDER_DIST 2))
 			(- (- 37 (+ (CelHigh vControlIcons lSliderText 4) 3)) 9)
 			priority
 		)
@@ -151,7 +185,7 @@
 		view vControlIcons
 		loop lSliderText
 		cel 1
-		nsLeft (+ SLIDER_X 50)
+		nsLeft (+ SLIDER_X (* SLIDER_DIST 1))
 		nsTop SLIDER_Y
 		signal FIXED_POSN
 		noun N_VOLUME
@@ -167,7 +201,7 @@
 		view vControlIcons
 		loop lSliderText
 		cel 1
-		nsLeft (+ SLIDER_X 100)
+		nsLeft (+ SLIDER_X (* SLIDER_DIST 2))
 		nsTop SLIDER_Y
 		signal FIXED_POSN
 		noun N_SPEED
@@ -215,7 +249,7 @@
 		loop lRestoreButton
 		cel 0
 		nsLeft BUTTON_X
-		nsTop (+ BUTTON_Y 20)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 1))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTORE
 		helpVerb V_HELP
@@ -228,7 +262,7 @@
 		loop lRestartButton
 		cel 0
 		nsLeft BUTTON_X
-		nsTop (+ BUTTON_Y 40)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 2))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTART
 		helpVerb V_HELP
@@ -241,7 +275,7 @@
 		loop lQuitButton
 		cel 0
 		nsLeft BUTTON_X
-		nsTop (+ BUTTON_Y 60)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 3))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_QUIT
 		helpVerb V_HELP
@@ -254,7 +288,7 @@
 		loop lAboutButton
 		cel 0
 		nsLeft BUTTON_X
-		nsTop (+ BUTTON_Y 80)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 4))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_ABOUT
 		helpVerb V_HELP
@@ -267,7 +301,7 @@
 		loop lHelpButton
 		cel 0
 		nsLeft (+ BUTTON_X 26)
-		nsTop (+ BUTTON_Y 80)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 4))
 		cursor vHelpCursor
 		message V_HELP
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
@@ -282,7 +316,7 @@
 		loop lOKButton
 		cel 0
 		nsLeft BUTTON_X
-		nsTop (+ BUTTON_Y 100)
+		nsTop (+ BUTTON_Y (* BUTTON_DIST 5))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_OK
 		helpVerb V_HELP
@@ -334,7 +368,7 @@
 		(Graph GShowBits MSG_BUTTON_Y MSG_BUTTON_X
 			(+ MSG_BUTTON_Y (CelHigh vControlIcons lCurrentMode))
 			(+ MSG_BUTTON_X (CelWide vControlIcons lCurrentMode))
-			1
+			VMAP
 		)
 		(super show: &rest)
 	)
