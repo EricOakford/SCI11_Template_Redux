@@ -14,8 +14,7 @@
 (use Window)
 
 
-(class GameWindow kindof BorderWindow
-	
+(class GameWindow kindof BorderWindow	
 	(method (open)
 		;Customize the window here
 		(super open:	&rest)

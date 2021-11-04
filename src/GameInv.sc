@@ -18,7 +18,7 @@
 ;	 		)
 ;	 	)
 ;	
-;	 Then in the invCode init, add the inventory item to the add: call.
+;	 Then in the GameInv init, add the inventory item to the add: call.
 ;
 ;
 
@@ -32,29 +32,27 @@
 (use System)
 
 (public
-	invCode 0
+	GameInv 0
 	invWin 1
 )
 
-(instance invCode of Code
-	;This code initializes the game's inventory
-	
+(instance GameInv of Inventory
+	;This is the game-specific inventory	
 	(method (init)
-		(= inventory Inventory)
-		(inventory
+		((= inventory self)
 			window: invWin
 			helpIconItem: invHelp
 			selectIcon: invSelect
 			okButton: ok
 			add:
 			;add inventory items here
-				(Money setCursor: vInvMoney 1 0 yourself:)
+				Money
 			add: invLook invHand invSelect invMore invHelp ok
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
 			state: NOCLICKHELP
 		)
-	)	
+	)
 )
 
 (instance invWin of InsetWindow
@@ -73,29 +71,16 @@
 
 (class GameInvItem of InvItem
 	(properties
+		view vInvItems
+		signal IMMEDIATE
 		lowlightColor 2
-		cursorView 0
-		cursorLoop 0
-		cursorCel 0
-	)
-	(method (select)
-		;you can set the specific cursor for an item
-		(genericCursor
-			view: cursorView
-			loop: cursorLoop
-			cel: cursorCel
-		)
-		(theGame setCursor: genericCursor)
-		(super select: &rest)
 	)
 	
-	(method (setCursor cursorNumber loop cel)
-		(= cursorView cursorNumber)
-		(= cursorLoop loop)
-		(= cursorCel cel)
-		(= cursor genericCursor)
+	(method (init)
+		(= cursor invCursor)
+		(super init:)
 	)
-	
+
 	(method (doVerb theVerb &tmp port icon)
 		(if (not modNum) (= modNum curRoomNum))
 		(switch theVerb
@@ -112,24 +97,24 @@
 				)
 			)
 			(V_DO
-				(if (Message MsgSize modNum noun V_DO 0 1)
+				(if (Message MsgSize modNum noun V_DO NULL 1)
 					(= port (GetPort))
-					(Print addText: noun V_DO 0 0 0 0 modNum init:)
+					(Print addText: noun V_DO NULL NULL 0 0 modNum init:)
 					(SetPort port)
 				else
 					(= port (GetPort))
-					(Print addText: 0 V_DO 0 0 0 0 modNum init:)
+					(Print addText: NULL V_DO NULL 0 0 0 modNum init:)
 					(SetPort port)
 				)
 			)
 			(else 
-				(if (Message MsgSize modNum noun theVerb 0 1)
+				(if (Message MsgSize modNum noun theVerb NULL 1)
 					(= port (GetPort))
-					(Print addText: noun theVerb 0 0 0 0 modNum init:)
+					(Print addText: noun theVerb NULL 0 0 0 modNum init:)
 					(SetPort port)
 				else
 					(= port (GetPort))
-					(Print addText: 0 V_COMBINE 0 0 0 0 modNum init:)
+					(Print addText: NULL V_COMBINE NULL 0 0 0 modNum init:)
 					(SetPort port)
 				)
 			)
@@ -154,7 +139,6 @@
 		view vInvIcons
 		loop lInvOK
 		cel 0
-		cursor ARROW_CURSOR
 		signal (| HIDEBAR RELVERIFY IMMEDIATE)
 		noun N_OK
 		helpVerb V_HELP
@@ -166,11 +150,15 @@
 		view vInvIcons
 		loop lInvLook
 		cel 0
-		cursor vLookCursor
 		message V_LOOK
 		signal (| FIXED_POSN RELVERIFY)
 		noun N_LOOK
 		helpVerb V_HELP
+	)
+	
+	(method (init)
+		(= cursor lookCursor)
+		(super init:)
 	)
 )
 
@@ -179,10 +167,14 @@
 		view vInvIcons
 		loop lInvHand
 		cel 0
-		cursor vDoCursor
 		message V_DO
 		noun N_HAND
 		helpVerb V_HELP
+	)
+	
+	(method (init)
+		(= cursor doCursor)
+		(super init:)
 	)
 )
 
@@ -191,11 +183,15 @@
 		view vInvIcons
 		loop lInvHelp
 		cel 0
-		cursor vHelpCursor
 		message V_HELP
 		signal (| RELVERIFY IMMEDIATE)
 		noun N_HELP
 		helpVerb V_HELP
+	)
+	
+	(method (init)
+		(= cursor helpCursor)
+		(super init:)
 	)
 )
 
@@ -204,9 +200,13 @@
 		view vInvIcons
 		loop lInvSelect
 		cel 0
-		cursor ARROW_CURSOR
 		noun N_SELECT
 		helpVerb V_HELP
+	)
+	
+	(method (init)
+		(= cursor normalCursor)
+		(super init:)
 	)
 )
 
@@ -215,7 +215,6 @@
 		view vInvIcons
 		loop lInvMore
 		cel 0
-		cursor ARROW_CURSOR
 		maskView vIconBar
 		maskLoop lDisabledIcon
 		signal DISABLED	;disabled until it is completed
@@ -229,17 +228,37 @@
 	)
 )
 
-;Declare your inventory items below
+(instance lookCursor of Cursor
+	(properties
+		view vLookCursor
+	)
+)
 
+(instance doCursor of Cursor
+	(properties
+		view vDoCursor
+	)
+)
+
+(instance helpCursor of Cursor
+	(properties
+		view vHelpCursor
+	)
+)
+
+(instance invCursor of Cursor
+	(properties
+		view vInvItems
+		loop lInvCursors
+	)	
+)
+
+;Declare your inventory items below
 (instance Money of GameInvItem
 	(properties
-		view vInvMoney
-		cursor vInvMoney
+		cel iMoney	;cel and item number are the same by default
 		message V_MONEY
-		signal IMMEDIATE
 		noun N_MONEY
 		name "Money"
 	)
 )
-
-(instance genericCursor of Cursor)

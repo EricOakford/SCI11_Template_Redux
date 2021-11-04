@@ -9,7 +9,8 @@
 (define	vEgo		0)
 (define vBox		1)
 (define vTestBlock	4)
-(define vInvMoney	900)
+(define vInvItems	900)
+	(define lInvCursors	1)
 
 (define vWalkCursor 980)
 (define vLookCursor 981)
