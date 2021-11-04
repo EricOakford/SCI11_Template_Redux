@@ -14,14 +14,12 @@
 (use System)
 
 (public
-	iconCode 0
+	mainIconBar 0
 )
 
-(instance iconCode of Code
-	
+(instance mainIconBar of IconBar
 	(method (init)
-		(= theIconBar IconBar)
-		(theIconBar
+		((= theIconBar self)
 			add:
 			;These correspond to ICON_*** in game.sh
 				iconWalk iconLook iconDo iconTalk iconCustom
@@ -29,7 +27,7 @@
 			eachElementDo: #init
 			eachElementDo: #lowlightColor 5
 			eachElementDo: #modNum GAME_ICONBAR
-			curIcon: iconWalk
+			curIcon: iconLook
 			useIconItem: iconUseIt
 			helpIconItem: iconHelp
 			walkIconItem: iconWalk
@@ -191,7 +189,7 @@
 		loop lInvIcon
 		cel 0
 		cursor ARROW_CURSOR
-		type $0000
+		type nullEvt
 		message 0
 		signal (| HIDEBAR RELVERIFY IMMEDIATE)
 		maskView vIconBar
