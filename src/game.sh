@@ -9,24 +9,6 @@
 (include pics.sh) (include views.sh) ;graphical defines
 (include system.sh) (include sci2.sh) ;system and kernel functions
 (include talkers.sh) (include verbs.sh) ;message defines
-
-(define	cBlack			%0000000000000001) ;**	Bit mapped controls
-(define	cBlue			%0000000000000010)
-(define	cGreen			%0000000000000100)
-(define	cCyan			%0000000000001000)
-(define	cRed			%0000000000010000)
-(define	cMagenta		%0000000000100000)
-(define	cBrown			%0000000001000000)
-(define	cWhite			%0000000010000000)
-(define	cLtBlack		%0000000100000000)
-(define	cLtBlue			%0000001000000000)
-(define	cLtGreen		%0000010000000000)
-(define	cLtCyan			%0000100000000000)
-(define	cLtRed			%0001000000000000)
-(define	cLtMagenta		%0010000000000000)
-(define	cLtBrown		%0100000000000000)
-(define	cLtWhite		%1000000000000000)
-
 ;
 ; Global stuff
 
@@ -48,7 +30,6 @@
 
 ;
 ; Actual rooms
-
 (define	TITLE			100)
 (define ROOM101			101)
 (define	TESTROOM		110)

@@ -12,26 +12,20 @@
 (script# MAIN)
 (include game.sh) (include "0.shm")
 (use GameEgo)
-(use BordWind)
+(use Print)
 (use Dialog)
-(use Intrface)
-(use StopWalk)
+(use Talker)
+(use Messager)
 (use Polygon)
 (use PolyPath)
-(use Timer)
-(use Flags)
-(use Ego)
-(use Osc)
-(use Grooper)
-(use Print)
-(use Talker)
+(use StopWalk)
 (use IconBar)
-(use Messager)
-(use GControl)
-(use Invent)
+(use BordWind)
+(use Flags)
+(use Grooper)
 (use Sound)
-(use Game)
 (use User)
+(use Game)
 (use System)
 
 (public
@@ -39,8 +33,8 @@
 	Bset 1
 	Bclr 2
 	Btst 3
-	Face 6
-	EgoDead 7
+	Face 4
+	EgoDead 5
 )
 
 (local
@@ -212,8 +206,7 @@
 )
 
 (instance SCI11 kindof Game
-	; The main game instance. It adds game-specific functionality.
-	
+	; The main game instance. It adds game-specific functionality.	
 	(properties
 		printLang ENGLISH	;set your game's language here. Supported languages can be found in SYSTEM.SH.
 	)
@@ -477,8 +470,8 @@
 		(if modelessDialog
 			(modelessDialog dispose:)
 		)
-		(if (User canInput:)
-			(= theVerb ((User curEvent?) message?))
+		(if (user canInput:)
+			(= theVerb ((user curEvent?) message?))
 			(if (OneOf theVerb V_DO V_LOOK V_TALK)
 				(messager say: N_PRAGFAIL theVerb NULL 1 0 MAIN)
 			else ;non-handled verb

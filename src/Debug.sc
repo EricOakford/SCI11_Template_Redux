@@ -64,9 +64,16 @@
 						(= i (cast first:))
 						(while i
 							(= obj (NodeValue i))
-							(Format
-								@str
-								{class: %s\nview: %d\nloop: %d\ncel: %d\nposn: %d %d %d\nheading: %d\npri: %d\nsignal: $%x\nillBits: $%x\n}
+							(Format @str
+								{class: %s\n
+								view: %d\n
+								loop: %d\n
+								cel: %d\n
+								posn: %d %d %d\n
+								heading: %d\n
+								pri: %d\n
+								signal: $%x\n
+								illBits: $%x\n}
 								((obj -super-?) name?)
 								(obj view?)
 								(obj loop?)
@@ -167,8 +174,7 @@
 							(Graph GSaveBits t l b r VMAP)
 						)
 						(Graph GFillRect t l b r 1 255)
-						(= theColor 0)
-						(while (< theColor 256)
+						(for ((= theColor 0)) (< theColor 256) ((++ theColor))
 							(Graph
 								GFillRect
 								(+ t colorX (* colorX (/ theColor 8)))
@@ -178,7 +184,6 @@
 								1
 								theColor
 							)
-							(++ theColor)
 						)
 						(Graph GShowBits t l b r 1)
 						(repeat
@@ -254,7 +259,7 @@
 						)
 					)
 					(`@u
-						(User canInput: TRUE canControl: TRUE)
+						(user canInput: TRUE canControl: TRUE)
 						(theIconBar enable:
 							ICON_WALK
 							ICON_LOOK
@@ -379,7 +384,6 @@
 )
 
 (instance dInvD of Dialog
-	
 	(method (init &tmp theX theY temp2 ret newDText inventoryFirst temp6)
 		(= temp2 (= theX (= theY 4)))
 		(= ret 0)
