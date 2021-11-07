@@ -34,9 +34,13 @@
 (public
 	GameInv 0
 	invWin 1
+	resetInv 2
 )
 
-(define INV_RANGE 75)
+(local
+	theItem
+	theOwner
+)
 
 (instance GameInv of Inventory
 	;This is the game-specific inventory	
@@ -48,12 +52,20 @@
 			okButton: ok
 			add:
 			;add inventory items here
-				Money
-			add: invLook invHand invSelect invHelp ok
+				(Money setCursor: vInvItems lInvCursors iMoney yourself:)
+			add:
+			;add icons here
+				invLook
+				invHand
+				invSelect
+				invMore
+				invHelp
+				ok
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
 			state: NOCLICKHELP
 		)
+		(ego get: iMoney)
 	)
 )
 
@@ -63,24 +75,62 @@
 		botBordHgt 5
 	)
 	
-	(method (open)
-		(invLook
-			nsLeft: (- (/ (- (self right?) (self left?)) 2) INV_RANGE)
+	(method (open &tmp theX node obj)
+		(= theX 0)
+		(= node (inventory first:))
+		(while node
+			(if
+				(not
+					((= obj (NodeValue node)) isKindOf: InvItem)
+				)
+				(= theX
+					(+
+						theX
+						(CelWide (obj view?) (obj loop?) (obj cel?))
+					)
+				)
+			)
+			(= node (inventory next: node))
 		)
 		(super open:)
+		(invLook nsLeft: (/ (- (- right left) theX) 2))
 	)
 )
 
 (class GameInvItem of InvItem
 	(properties
-		view vInvItems
 		signal IMMEDIATE
 		lowlightColor 2
+		cursorView 0
+		cursorLoop 0
+		cursorCel 0
+		realOwner 0
 	)
 	
-	(method (init)
+	(method (select)
+		(invCursor
+			view: cursorView
+			loop: cursorLoop
+			cel: cursorCel
+		)
+		(theGame setCursor: invCursor)
+		(super select: &rest)
+	)
+	
+	(method (setCursor theView theLoop theCel)
+		(= cursorView theView)
+		(= cursorLoop theLoop)
+		(= cursorCel theCel)
 		(= cursor invCursor)
-		(super init:)
+	)
+
+	(method (ownedBy who)
+		(return
+			(if (== owner who)
+			else
+				(== realOwner who)
+			)
+		)
 	)
 
 	(method (doVerb theVerb &tmp port icon)
@@ -122,6 +172,34 @@
 			)
 		)
 	)	
+)
+
+(instance resetInv of Code	
+	(method (doit who &tmp i what temp2 numItems [str 20])
+		(= numItems 0)
+		(= theOwner who)
+		(= i (= temp2 0))
+		(while (< i iLastInvItem)
+			(if
+				(or
+					(== ((= what (inventory at: i)) owner?) theOwner)
+					(== (what realOwner?) theOwner)
+				)
+				(++ numItems)
+				(what realOwner: theOwner owner: 0)
+				(if (<= (++ temp2) 8)
+					(what owner: theOwner)
+					(= theItem i)
+				)
+			)
+			(++ i)
+		)
+		(if (<= numItems 8)
+			(invMore loop: 6)
+		else
+			(invMore loop: 5)
+		)
+	)
 )
 
 (class GameIconItem of IconItem
@@ -218,17 +296,46 @@
 		loop lInvMore
 		cel 0
 		cursor ARROW_CURSOR
-		maskView vIconBar
-		maskLoop lDisabledIcon
-		signal DISABLED	;disabled until it is completed
+		signal (| RELVERIFY IMMEDIATE)
 		noun N_MORE
 		helpVerb V_HELP
 	)
 	
-	(method (select)
-		;this doesn't work yet, but I'm putting the button here for completeness
-		(return FALSE)
+	(method (select &tmp i what obj temp3)
+		(return
+			(if (and (super select: &rest) (== loop 5))
+				(for ((= i 0)) (<= i theItem) ((++ i))
+					(if (== ((= obj (inventory at: i)) owner?) theOwner)
+						(obj realOwner: theOwner owner: 0)
+					)
+				)
+				(= temp3 0)
+				(= what theItem)
+				(while (< i iLastInvItem)
+					(if
+						(and
+							(==
+								((= obj (inventory at: i)) realOwner?)
+								theOwner
+							)
+							(<= (++ temp3) 8)
+						)
+						(obj owner: theOwner)
+						(= theItem i)
+					)
+					(++ i)
+				)
+				(if (== what theItem)
+					(resetInv doit: theOwner)
+				)
+				(inventory hide: highlightedIcon: 0 show: theOwner)
+				(return FALSE)
+			else
+				FALSE
+			)
+		)
 	)
+
 )
 
 (instance lookCursor of Cursor
@@ -249,7 +356,9 @@
 
 (instance helpCursor of Cursor
 	(properties
-		view vHelpCursor
+		view vIconBar
+		loop lHelpIcon
+		cel 2
 	)
 )
 
@@ -263,6 +372,8 @@
 ;Declare your inventory items below
 (instance Money of GameInvItem
 	(properties
+		view vInvItems
+		loop 0
 		cel iMoney	;cel and item number are the same by default
 		message V_MONEY
 		noun N_MONEY

@@ -2,6 +2,9 @@
 ;;; 6.shm -- Produced by SCI Companion
 ;;; This file should only be edited with the SCI Companion message editor
 
+;;; CASES
+
+
 ;;; NOUNS
 
 (define N_OK 1)
@@ -10,9 +13,6 @@
 (define N_HELP 4)
 (define N_SELECT 5)
 (define N_MONEY 6)
-(define N_INVEMPTY 7)
+(define N_ONE_PAGE 7)
 (define N_MORE 8)
-
-;;; CASES
-
 

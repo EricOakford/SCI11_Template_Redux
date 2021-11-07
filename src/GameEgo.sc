@@ -54,17 +54,17 @@
 	(method (showInv &tmp oldCur)
 		;bring up the inventory
 		(if (inventory firstTrue: #ownedBy ego)
-			(theIconBar hide:)
 			(= oldCur theCursor)
-			(inventory showSelf:)
+			((ScriptID GAME_INV 2) doit: ego)
+			(inventory showSelf: ego)
+			(= theCursor oldCur)
 			(if (not (theIconBar curInvIcon?))
 				(theIconBar curIcon: (theIconBar at: ICON_WALK) disable: ICON_CURITEM)
 				(if (& ((theIconBar curIcon?) signal?) DISABLED)
 					(theIconBar advanceCurIcon:)
 				)
 				(theGame setCursor: ((theIconBar curIcon?) cursor?))
-			)			
-			(theGame setCursor: oldCur TRUE)
+			)
 		else
 		;if ego has no items, bring up the message saying so.
 			(messager say: N_EGO NULL C_INVEMPTY 0 0 GAME_EGO)
