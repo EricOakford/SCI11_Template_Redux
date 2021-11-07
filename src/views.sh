@@ -39,6 +39,7 @@
 		lInvOK
 		lInvSelect
 		lInvMore
+		lInvMoreDisabled
 	)
 
 (define vControlIcons 995)

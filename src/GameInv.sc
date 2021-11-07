@@ -42,6 +42,8 @@
 	theOwner
 )
 
+(define ITEMS_PER_PAGE 10)
+
 (instance GameInv of Inventory
 	;This is the game-specific inventory	
 	(method (init)
@@ -175,11 +177,11 @@
 )
 
 (instance resetInv of Code	
-	(method (doit who &tmp i what temp2 numItems [str 20])
+	(method (doit who &tmp i what pageNum numItems)
 		(= numItems 0)
 		(= theOwner who)
-		(= i (= temp2 0))
-		(while (< i iLastInvItem)
+		(= pageNum 0)
+		(for ((= i 0)) (< i iLastInvItem) ((++ i))
 			(if
 				(or
 					(== ((= what (inventory at: i)) owner?) theOwner)
@@ -187,17 +189,16 @@
 				)
 				(++ numItems)
 				(what realOwner: theOwner owner: 0)
-				(if (<= (++ temp2) 8)
+				(if (<= (++ pageNum) ITEMS_PER_PAGE)
 					(what owner: theOwner)
 					(= theItem i)
 				)
 			)
-			(++ i)
 		)
-		(if (<= numItems 8)
-			(invMore loop: 6)
+		(if (<= numItems ITEMS_PER_PAGE)
+			(invMore loop: lInvMoreDisabled)
 		else
-			(invMore loop: 5)
+			(invMore loop: lInvMore)
 		)
 	)
 )
@@ -301,15 +302,15 @@
 		helpVerb V_HELP
 	)
 	
-	(method (select &tmp i what obj temp3)
+	(method (select &tmp i what obj pageNum)
 		(return
-			(if (and (super select: &rest) (== loop 5))
+			(if (and (super select: &rest) (== loop lInvMore))
 				(for ((= i 0)) (<= i theItem) ((++ i))
 					(if (== ((= obj (inventory at: i)) owner?) theOwner)
 						(obj realOwner: theOwner owner: 0)
 					)
 				)
-				(= temp3 0)
+				(= pageNum 0)
 				(= what theItem)
 				(while (< i iLastInvItem)
 					(if
@@ -318,7 +319,7 @@
 								((= obj (inventory at: i)) realOwner?)
 								theOwner
 							)
-							(<= (++ temp3) 8)
+							(<= (++ pageNum) ITEMS_PER_PAGE)
 						)
 						(obj owner: theOwner)
 						(= theItem i)
@@ -335,7 +336,6 @@
 			)
 		)
 	)
-
 )
 
 (instance lookCursor of Cursor
