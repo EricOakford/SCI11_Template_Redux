@@ -36,6 +36,8 @@
 	invWin 1
 )
 
+(define INV_RANGE 75)
+
 (instance GameInv of Inventory
 	;This is the game-specific inventory	
 	(method (init)
@@ -47,7 +49,7 @@
 			add:
 			;add inventory items here
 				Money
-			add: invLook invHand invSelect invMore invHelp ok
+			add: invLook invHand invSelect invHelp ok
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
 			state: NOCLICKHELP
@@ -63,7 +65,7 @@
 	
 	(method (open)
 		(invLook
-			nsLeft: (- (/ (- (self right?) (self left?)) 2) 86)
+			nsLeft: (- (/ (- (self right?) (self left?)) 2) INV_RANGE)
 		)
 		(super open:)
 	)
@@ -215,6 +217,7 @@
 		view vInvIcons
 		loop lInvMore
 		cel 0
+		cursor ARROW_CURSOR
 		maskView vIconBar
 		maskLoop lDisabledIcon
 		signal DISABLED	;disabled until it is completed
@@ -230,13 +233,17 @@
 
 (instance lookCursor of Cursor
 	(properties
-		view vLookCursor
+		view vIconBar
+		loop lLookIcon
+		cel 2
 	)
 )
 
 (instance doCursor of Cursor
 	(properties
-		view vDoCursor
+		view vIconBar
+		loop lDoIcon
+		cel 2
 	)
 )
 

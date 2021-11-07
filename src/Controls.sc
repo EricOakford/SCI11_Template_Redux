@@ -300,13 +300,19 @@
 		view vControlIcons
 		loop lHelpButton
 		cel 0
+		cursor vHelpCursor
+		type helpEvent
 		nsLeft (+ BUTTON_X 26)
 		nsTop (+ BUTTON_Y (* BUTTON_DIST 4))
-		cursor vHelpCursor
 		message V_HELP
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_HELP
 		helpVerb V_HELP
+	)
+	
+	(method (init)
+		(= cursor helpCursor)
+		(super init:)
 	)
 )
 
@@ -371,5 +377,13 @@
 			VMAP
 		)
 		(super show: &rest)
+	)
+)
+
+(instance helpCursor of Cursor
+	(properties
+		view vIconBar
+		loop lHelpIcon
+		cel 2
 	)
 )

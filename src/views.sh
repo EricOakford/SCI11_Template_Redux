@@ -12,10 +12,6 @@
 (define vInvItems	900)
 	(define lInvCursors	1)
 
-(define vWalkCursor 980)
-(define vLookCursor 981)
-(define vDoCursor	982)
-(define vTalkCursor 983)
 (define vHelpCursor 989)
 (define vIconBar	990)
 	(enum

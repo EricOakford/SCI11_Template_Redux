@@ -241,7 +241,6 @@
 		view vIconBar
 		loop lHelpIcon
 		cel 0
-		cursor vHelpCursor
 		type helpEvent
 		message V_HELP
 		signal (| RELVERIFY IMMEDIATE)
@@ -250,28 +249,49 @@
 		noun N_HELP
 		helpVerb V_HELP
 	)
+	
+	(method (init)
+		(= cursor helpCursor)
+		(super init:)
+	)
 )
 
 (instance walkCursor of Cursor
 	(properties
-		view vWalkCursor
+		view vIconBar
+		loop lWalkIcon
+		cel 2
 	)
 )
 
 (instance lookCursor of Cursor
 	(properties
-		view vLookCursor
+		view vIconBar
+		loop lLookIcon
+		cel 2
 	)
 )
 
 (instance doCursor of Cursor
 	(properties
-		view vDoCursor
+		view vIconBar
+		loop lDoIcon
+		cel 2
 	)
 )
 
 (instance talkCursor of Cursor
 	(properties
-		view vTalkCursor
+		view vIconBar
+		loop lTalkIcon
+		cel 2
+	)
+)
+
+(instance helpCursor of Cursor
+	(properties
+		view vIconBar
+		loop lHelpIcon
+		cel 2
 	)
 )
