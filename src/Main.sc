@@ -35,6 +35,7 @@
 	Btst 3
 	Face 4
 	EgoDead 5
+	YesNoDialog 6
 )
 
 (local
@@ -122,11 +123,11 @@
 	textSpeed		=	2				;time text remains on screen
 	altPolyList							;list of alternate obstacles
 	;globals 96-99 are unused
-	global96
-	global97
-	global98
+		global96
+		global97
+		global98
 	lastSysGlobal
-	;globals 100 and above are for game use	
+	;globals > 99 are for game use
 	myTextColor				;color of text in message boxes
 	myBackColor				;color of message boxes
 	myHighlightColor		;color of icon highlight
@@ -198,6 +199,27 @@
 	(curRoom newRoom: DEATH)
 )
 
+(procedure (YesNoDialog question &tmp oldCur)
+	;this brings up a "yes or no" dialog choice.
+	(= oldCur ((theIconBar curIcon?) cursor?))
+	(theGame setCursor: normalCursor)
+	(if modelessDialog
+		(modelessDialog dispose:)
+	)
+	(return
+		(Print
+			font:		userFont
+			width:		100
+			mode:		teJustCenter
+			addText:	question NULL NULL 1 0 0 MAIN
+			addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
+			addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
+			init:
+		)
+	)
+	(theGame setCursor: oldCur)
+)
+
 (instance egoObj of GameEgo
 	(properties
 		name {ego}
@@ -224,15 +246,15 @@
 		;Assign globals to this script's objects
 		((= theMusic musicSound)
 			owner: self
-			init:			
+			init:
 		)
 		((= globalSound theGlobalSound)
 			owner: self
-			init:			
+			init:
 		)
 		((= soundFx soundEffects)
 			owner: self
-			init:			
+			init:
 		)
 		(pointsSound
 			owner: self
@@ -254,14 +276,15 @@
 		(= waitCursor theWaitCursor)
 
 		;load up the ego, icon bar, inventory, and control panel
-		(= ego egoObj)	
+		(= ego egoObj)
 		((ScriptID GAME_ICONBAR 0) init:)
 		((ScriptID GAME_INV 0) init:)
 		((ScriptID GAME_CONTROLS 0) init:)
-		;anything not requiring objects in this script is loaded in GAME_INIT.SC	
+		
+		;anything not requiring objects in this script is loaded in GAME_INIT.SC
 		((ScriptID GAME_INIT 0) doit:)
 	)
-	
+
 	(method (startRoom roomNum)
 		((ScriptID DISPOSE_CODE 0) doit: roomNum)
 		(if
@@ -287,7 +310,7 @@
 		)
 	)
 
-	(method (handleEvent event &tmp oldCur)
+	(method (handleEvent event)
 		(super handleEvent: event)
 		(if (event claimed?) (return TRUE))
 		(return
@@ -402,65 +425,33 @@
 				(pointsSound play:)
 			)
 		)
-	)		
-	
+	)
+
 	(method (showAbout)
 		((ScriptID GAME_ABOUT 0) doit:)
 		(DisposeScript GAME_ABOUT)
 	)
 	
-	(method (restart &tmp oldCur)
+	(method (restart)
 		;if a parameter is given, skip the dialog and restart immediately
 		(if argc
 			(super restart:)
 		else
 			;the game's restart dialog
-			(= oldCur ((theIconBar curIcon?) cursor?))
-			(theGame setCursor: normalCursor)		
-			(if modelessDialog
-				(modelessDialog dispose:)
-			)
-			(if
-				(Print
-					font:		userFont
-					width:		100
-					mode:		teJustCenter
-					addText:	N_RESTART NULL NULL 1 0 0 MAIN
-					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-					addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
-					init:
-				)
+			(if (YesNoDialog N_RESTART)
 				(super restart:)
-			else
-				(theGame setCursor: oldCur)
 			)
 		)
 	)
 
-	(method (quitGame &tmp oldCur)
+	(method (quitGame)
 		;if a parameter is given, skip the dialog and quit immediately		
 		(if argc
 			(super quitGame:)
 		else
-		;the game's quit dialog
-			(= oldCur ((theIconBar curIcon?) cursor?))
-			(theGame setCursor: normalCursor)		
-			(if modelessDialog
-				(modelessDialog dispose:)
-			)		
-			(if
-				(Print
-					font:		userFont
-					width:		100
-					mode:		teJustCenter
-					addText:	N_QUITGAME NULL NULL 1 0 0 MAIN
-					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-					addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
-					init:
-				)
+			;the game's quit dialog
+			(if (YesNoDialog N_QUITGAME)
 				(super quitGame:)
-			else
-				(theGame setCursor: oldCur)
 			)
 		)
 	)
@@ -544,15 +535,16 @@
 		(user canControl: FALSE canInput: FALSE)
 		(ego setMotion: 0)
 		(= disabledIcons NULL)
-		(theIconBar eachElementDo: #perform checkIcon)
-		(theIconBar curIcon: (theIconBar at: ICON_CONTROL))
-		(theIconBar disable:
-			ICON_WALK
-			ICON_LOOK
-			ICON_DO
-			ICON_TALK
-			ICON_CURITEM
-			ICON_INVENTORY
+		(theIconBar
+			eachElementDo: #perform checkIcon
+			curIcon: (theIconBar at: ICON_CONTROL)
+			disable:
+				ICON_WALK
+				ICON_LOOK
+				ICON_DO
+				ICON_TALK
+				ICON_CURITEM
+				ICON_INVENTORY
 		)
 		(if (not (HaveMouse))
 			(theGame setCursor: INVIS_CURSOR)
@@ -564,7 +556,7 @@
 
 (instance gameHandsOn of Code
 	(method (doit)
-		(user canInput: TRUE canControl: TRUE)
+		(user canControl: TRUE canInput: TRUE)
 		(theIconBar enable:
 			ICON_WALK
 			ICON_LOOK
@@ -577,7 +569,7 @@
 			(theIconBar enable: ICON_CONTROL)
 		)
 		(if (not (theIconBar curInvIcon?))
-			(theIconBar disable: ICON_CURITEM)	
+			(theIconBar disable: ICON_CURITEM)
 		)
 		(if oldCurIcon
 			(theIconBar curIcon: oldCurIcon)

@@ -12,6 +12,7 @@
 (use GameEgo)
 (use GameWindow)
 (use GameIconBar)
+(use Print)
 (use GameInv)
 (use BordWind)
 (use Talker)
@@ -77,12 +78,13 @@
 		(= systemWindow BorderWindow)
 		((= narrator Narrator)
 			font: userFont
+			color: myTextColor
 			back: myBackColor
 			keepWindow: TRUE
 		)
 		(user alterEgo: ego canControl: FALSE canInput: FALSE)
 		(= useSortedFeatures TRUE)
-		(= eatMice 30)	
+		(= eatMice 30)
 		
 		(= msgType TEXT_MSG)		
 		(= scoreFont 9)
