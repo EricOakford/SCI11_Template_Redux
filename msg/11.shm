@@ -2,9 +2,6 @@
 ;;; 11.shm -- Produced by SCI Companion
 ;;; This file should only be edited with the SCI Companion message editor
 
-;;; CASES
-
-
 ;;; NOUNS
 
 (define N_WALK 1)
@@ -17,4 +14,7 @@
 (define N_CUSTOM 8)
 (define N_TALK 9)
 (define N_SCORE 10)
+
+;;; CASES
+
 

@@ -9,14 +9,8 @@
 (script# GAME_INIT)
 (include game.sh) (include "0.shm")
 (use Main)
-(use GameEgo)
-(use GameWindow)
-(use GameIconBar)
-(use Print)
-(use GameInv)
-(use BordWind)
 (use Talker)
-(use User)
+(use BordWind)
 (use System)
 
 (local
@@ -24,11 +18,15 @@
 )
 
 (public
-	GameInitCode 0
+	gameInitCode 0
 )
 
-(instance GameInitCode of Code	
+(instance gameInitCode of Code
 	(method (doit)
+		(= numVoices (DoSound NumVoices))
+		(= numColors (Graph GDetect))
+		(= useSortedFeatures TRUE)
+		
 		;When you quit the game, a random message will appear at the DOS prompt.
 		;Customize these messages in the message editor as you see fit.
 		(Message MsgGet MAIN N_QUIT_STR NULL NULL (Random 1 4) @quitStr)
@@ -40,65 +38,44 @@
 		; Render messages with the |f2| tag in smallFont (default 4).
 		; Render messages with the |f3| tag in font 1307.		
 		(TextFonts SYSFONT userFont smallFont 1307)
+		
+		(= systemWindow BorderWindow)
+		(theGame
+			setCursor: theCursor TRUE 304 172
+		)
+		;at this point, the color globals have already been initialized,
+		;so set the interface colors using them.	
+		(= myTextColor colBlack)
+		(= myBackColor colGray4)
+		(systemWindow
+			color: myTextColor
+			back: myBackColor
+			;comment these lines out if not using a BorderWindow!
+			topBordColor: colWhite
+			lftBordColor: colGray5
+			rgtBordColor: colGray3
+			botBordColor: colGray2
+		)
+		
 		; These correspond to color codes used in messages (values into global palette).
 		; By default, render messages as color 0.
-		; Render messages with the |c1| tag as color 15.
-		; Render messages with the |c2| tag as color 23.
-		; Render messages with the |c3| tag as color 5.		
-		(TextColors 0 15 23 5)
+		; Render messages with the |c1| tag as very light-red
+		; Render messages with the |c2| tag as light-brown (dark yellow).
+		; Render messages with the |c3| tag as dark gray.
+		(TextColors colBlack colVLRed colDYellow colGray3)
 		
-		;set up the colors
-		;check the current driver and determine if it is VGA or not
-		(if
-			(and
-				(>= (= numColors (Graph GDetect)) 2)
-				(<= numColors 16)
-			)
-			;if 16 colors or less, it's not VGA
-			(= isVGA FALSE)
-		else
-			(= isVGA TRUE)
-		)
-		
-		;now set up the interface colors
-		(if isVGA
-			;VGA colors
-			(= myTextColor 0)
-			(= myBackColor 5)
-			(= myLowlightColor (Palette PALMatch 159 159 159))
-			(= myHighlightColor 0)
-		else
-			;EGA colors
-			(= myTextColor vBLACK)
-			(= myBackColor vLGREY)
-			(= myLowlightColor vGREY)
-			(= myHighlightColor vBLACK)
-		)
-		(= userFont USERFONT)
-		(= systemWindow BorderWindow)
 		((= narrator Narrator)
 			font: userFont
 			color: myTextColor
 			back: myBackColor
 			keepWindow: TRUE
 		)
-		(user alterEgo: ego canControl: FALSE canInput: FALSE)
-		(= useSortedFeatures TRUE)
+		(= msgType TEXT_MSG)
 		(= eatMice 30)
-		
-		(= msgType TEXT_MSG)		
-		(= scoreFont 9)
 		(= possibleScore 999)
 		(= score 0)
-		(= numVoices (DoSound NumVoices))
 		(= debugging TRUE)	;Set this to FALSE to disable the debug features
-		(theIconBar enable:)
-		;now go to the speed test room
-		(theGame
-			setCursor:	(waitCursor posn: 300 180, yourself:),
-			handsOff:,
-			newRoom:		SPEED_TEST
-		)		
+		(theGame handsOff:)
 		(DisposeScript GAME_INIT)	;don't need this in memory anymore
 	)
 )

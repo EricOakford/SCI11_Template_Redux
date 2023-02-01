@@ -43,13 +43,13 @@
 
 (instance deathRoom of Room
 	(properties
-		picture pSpeedTest
+		picture vSpeedTest
 		style FADEOUT
 	)
 	
 	(method (init)
 		(theMusic fade:)
-		(globalSound fade:)
+		(theMusic2 fade:)
 		(theIconBar disable:)
 		(theGame setCursor: normalCursor TRUE)
 		(super init:)

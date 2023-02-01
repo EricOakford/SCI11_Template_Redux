@@ -26,11 +26,11 @@
 
 (instance speedRoom of Room
 	(properties
-		picture pSpeedTest
+		picture vSpeedTest
 	)
 	
 	(method (init)
-		(LoadMany RES_VIEW vTestBlock)
+		(LoadMany RES_VIEW vSpeedTest)
 		(super init:)
 		(theGame handsOff:)
 		(ego setSpeed: 0)
@@ -48,12 +48,11 @@
 
 (instance fred of Actor
 	(properties
-		view vTestBlock
+		view vSpeedTest
 	)
 )
 
 (instance speedTest of Script
-	
 	(method (changeState newState)
 		(switch (= state newState)
 			(0
@@ -81,12 +80,11 @@
 )
 
 (instance startGame of Code
-	
 	(method (doit &tmp nextRoom)
 		(if debugging
 			(= nextRoom WHERE_TO)
 			else
-				(= nextRoom TITLE)
+				(= nextRoom rTitle)
 		)		
 		(cond 
 			((> machineSpeed 160)

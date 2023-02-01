@@ -28,7 +28,7 @@
 )
 
 (local
-	invDButton
+	yesI
 )
 (procedure (noScrolling)
 	(if (OneOf (curRoom style?) SCROLLRIGHT SCROLLLEFT SCROLLUP SCROLLDOWN)
@@ -265,7 +265,7 @@
 							ICON_LOOK
 							ICON_DO
 							ICON_TALK
-							ICON_CURITEM
+							ICON_ITEM
 							ICON_INVENTORY
 						)
 					)
@@ -425,30 +425,30 @@
 		)
 		(= window systemWindow)
 		(self setSize:)
-		(= invDButton (DButton new:))
-		(invDButton
+		(= yesI (DButton new:))
+		(yesI
 			text: {Outta here!}
 			font: 999
 			setSize:
-			moveTo: (- nsRight (+ 4 (invDButton nsRight?))) nsBottom
+			moveTo: (- nsRight (+ 4 (yesI nsRight?))) nsBottom
 		)
-		(self add: invDButton setSize: center:)
+		(self add: yesI setSize: center:)
 		(return ret)
 	)
 	
 	(method (doit &tmp ret item)
 		(self init:)
 		(self open: 4 15)
-		(= ret invDButton)
+		(= ret yesI)
 		(repeat
 			(= ret (super doit: ret))
 			(if
-			(OneOf ret 0 -1 invDButton invDButton)
+			(OneOf ret 0 -1 yesI yesI)
 				(break)
 			)
 			(ego get: (inventory indexOf: (ret value?)))
 		)
-		(if (== ret invDButton)
+		(if (== ret yesI)
 			(= item 0)
 			(while (< item (inventory size?))
 				(if ((inventory at: item) isKindOf: InvItem)

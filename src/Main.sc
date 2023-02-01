@@ -1,41 +1,36 @@
 ;;; Sierra Script 1.0 - (do not remove this comment)
 ;
-;	 MAIN.SC
+;	MAIN.SC
 ;
-;	 This is the main game script. It contains the main game instance and all the global variables.
-;	
-;	 In addition to the above, it contains the crucial default Messager
-;	 and its findTalker method (used for mapping talker numbers to a Talker or Narrator instance).
+;	This is the main game script. It contains the main game instance and all the global variables.
 ;
+;	In addition to the above, it contains the crucial default Messager
+;	and its findTalker method (used for mapping talker numbers to a Talker or Narrator instance).
 ;
 
 (script# MAIN)
 (include game.sh) (include "0.shm")
 (use GameEgo)
-(use Print)
+(use Procs)
+(use Intrface)
 (use Dialog)
+(use Print)
 (use Talker)
 (use Messager)
+(use PMouse)
 (use Polygon)
 (use PolyPath)
-(use StopWalk)
 (use IconBar)
-(use BordWind)
+(use Feature)
 (use Flags)
-(use Grooper)
+(use Window)
 (use Sound)
-(use User)
 (use Game)
+(use User)
 (use System)
 
 (public
-	SCI11 0
-	Bset 1
-	Bclr 2
-	Btst 3
-	Face 4
-	EgoDead 5
-	YesNoDialog 6
+	SCI11 0 ;Replace "SCI11" with the game's internal name (up to 6 characters)
 )
 
 (local
@@ -127,186 +122,186 @@
 		global97
 		global98
 	lastSysGlobal
-	;globals > 99 are for game use
+	;globals 100 and above are for game use	
+	theMusic	;music object, current playing music
+	gameCode = 1234		;remnant from SCI1.0
+	theMusic2	;second sound object, can be used for sound effects
+	
+	;standard globals for colors
+	colBlack
+	colGray1
+	colGray2
+	colGray3
+	colGray4
+	colGray5
+	colWhite
+	colDRed
+	colLRed
+	colVLRed
+	colDYellow
+	colYellow
+	colLYellow
+	colVDGreen
+	colDGreen
+	colLGreen
+	colVLGreen
+	colDBlue
+	colBlue
+	colLBlue
+	colVLBlue
+	colMagenta
+	colLMagenta
+	colCyan
+	colLCyan
+	;end standard color globals
+
 	myTextColor				;color of text in message boxes
 	myBackColor				;color of message boxes
-	myHighlightColor		;color of icon highlight
-	myLowlightColor			;color of icon lowlight
-	isVGA					;is the graphics driver VGA or not?
-	debugging				;debug mode enabled
-	statusLine				;pointer for status line code
-	soundFx					;sound effect being played
-	theMusic				;music object, current playing music
-	globalSound				;ambient sound
-	disabledIcons
-	oldCurIcon
-	scoreFont				;font for displaying the score in the control panel
+	gameFlags				;pointer for Flags object, which only requires one global
+	saveCursorX				; position of cursor when HandsOff is used
+	saveCursorY				;
 	numColors				;Number of colors supported by graphics driver
 	numVoices				;Number of voices supported by sound driver
-	deathReason				;message to display when calling EgoDead
-	gameFlags				;pointer for Flags object, which only requires one global
+	debugging				;debug mode enabled
+	isHandsOff				;ego can't be controlled
+	egoLooper				;pointer for ego's stopGroop
+	deathReason
+	theCurIcon
+	iconSettings
 )
 
-;These will be replaced with macro defines once those are supported
-(procedure (Bset flagEnum)
-;;;	(|= [gameFlags (/ flagEnum 16)] (>> $8000 (mod flagEnum 16))
-	(gameFlags set: flagEnum)
-)
-
-(procedure (Bclr flagEnum)
-;;;	(&= [gameFlags (/ flagEnum 16)] (~ (>> $8000 (mod flagEnum 16))))
-	(gameFlags clear: flagEnum)
-)
-
-(procedure (Btst flagEnum)
-;;;	(return
-;;;		(&
-;;;			[gameFlags (/ flagEnum 16)]
-;;;			(>> $8000 (mod flagEnum 16))
-;;;		)
-;;;	)
-	(gameFlags test: flagEnum)
-)
-
-(procedure (Face actor1 actor2 both whoToCue &tmp ang1To2 theX theY i)
-	;This makes one actor face another.
-	(= i 0)
-	(if (IsObject actor2)
-		(= theX (actor2 x?))
-		(= theY (actor2 y?))
-		(if (== argc 3) (= i both))
-	else
-		(= theX actor2)
-		(= theY both)
-		(if (== argc 4) (= i whoToCue))
-	)
-	(= ang1To2
-		(GetAngle (actor1 x?) (actor1 y?) theX theY)
-	)
-	(actor1
-		setHeading: ang1To2 (if (IsObject i) i else 0)
-	)
-)
-
-(procedure (EgoDead theReason)
-	;This procedure handles when ego dies. It closely matches that of SQ4, SQ5 and KQ6.
-	;If a specific message is not given, the game will use a default message.
-	(if (not argc)
-		(= deathReason deathGENERIC)
-	else
-		(= deathReason theReason)
-	)
-	(curRoom newRoom: DEATH)
-)
-
-(procedure (YesNoDialog question &tmp oldCur)
-	;this brings up a "yes or no" dialog choice.
-	(= oldCur ((theIconBar curIcon?) cursor?))
-	(theGame setCursor: normalCursor)
-	(if modelessDialog
-		(modelessDialog dispose:)
-	)
-	(return
-		(Print
-			font:		userFont
-			width:		100
-			mode:		teJustCenter
-			addText:	question NULL NULL 1 0 0 MAIN
-			addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-			addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
-			init:
-		)
-	)
-	(theGame setCursor: oldCur)
-)
-
-(instance egoObj of GameEgo
+;
+; Global sound objects
+(instance longSong of Sound
 	(properties
-		name {ego}
-		view vEgo
+		flags mNOPAUSE
 	)
 )
 
-(instance SCI11 kindof Game
-	; The main game instance. It adds game-specific functionality.	
+(instance longSong2 of Sound
+	(properties
+		flags mNOPAUSE
+	)
+)
+
+;
+;  Sound used only by theGame:solvePuzzle
+(instance pointsSound of Sound
+	(properties
+		number sScore
+		flags mNOPAUSE
+	)
+)
+
+;
+; The main game instance. It adds game-specific functionality.	
+; Replace "SCI11" with the game's internal name (up to 6 characters)
+(instance SCI11 of Game
 	(properties
 		printLang ENGLISH	;set your game's language here. Supported languages can be found in SYSTEM.SH.
 	)
 
 	(method (init)
-		;load some important modules
-		(= systemWindow BorderWindow)
+		;these MUST be pre-loaded to prevent fragmentation
 		Print
 		DButton
 		Narrator
 		Polygon
 		PolyPath
-		(super init:)
-
-		;Assign globals to this script's objects
-		((= theMusic musicSound)
+		
+		;load up the standard game system
+		(= systemWindow SysWindow)
+		(= version {x.yyy})
+		(super init: &rest)
+		
+		;initialize the colors first
+		((ScriptID COLOR_INIT 0) doit:)
+		
+		;set up the global sounds
+		((= theMusic longSong)
 			owner: self
 			init:
 		)
-		((= globalSound theGlobalSound)
+		((= theMusic2 longSong2)
 			owner: self
 			init:
 		)
-		((= soundFx soundEffects)
-			owner: self
-			init:
-		)
+		
 		(pointsSound
 			owner: self
 			init:
 			setPri: 15
 			setLoop: 1
 		)
-		(= messager gameMessager)
+		
+		;set up doVerb and feature initializer code
 		(= doVerbCode gameDoVerbCode)
+		(= ftrInitializer gameFtrInit)
+		
+		;assign code instances to variables
+		(= pMouse PseudoMouse)
+		(= messager gameMessager)
 		(= approachCode gameApproachCode)
 		(= handsOffCode gameHandsOff)
 		(= handsOnCode gameHandsOn)
-		(= statusLine statusCode)
 		((= gameFlags gameEventFlags)
 			init:
 		)
-		((= altPolyList (List new:)) name: {altPolys} add:)
-		(= normalCursor theArrowCursor)		
-		(= waitCursor theWaitCursor)
-
-		;load up the ego, icon bar, inventory, and control panel
-		(= ego egoObj)
-		((ScriptID GAME_ICONBAR 0) init:)
-		((ScriptID GAME_INV 0) init:)
-		((ScriptID GAME_CONTROLS 0) init:)
+		((= altPolyList (List new:))
+			name: {altPolys}
+			add:
+		)
 		
-		;anything not requiring objects in this script is loaded in GAME_INIT.SC
+		;set up the ego
+		(= ego GameEgo)
+		(= egoLooper (ScriptID GAME_EGO 1))
+		(user alterEgo:  ego)
+
+		;initialize icon bar, control panel, and inventory
+		((ScriptID GAME_ICONBAR 0) doit:)
+		((ScriptID GAME_CONTROLS 0) doit:)
+		((ScriptID GAME_INV 0) init:)
+		
+		;initialize everything else
 		((ScriptID GAME_INIT 0) doit:)
+		
+		;now go to the speed tester
+		(self newRoom: SPEED_TEST)
 	)
 
-	(method (startRoom roomNum)
-		((ScriptID DISPOSE_CODE 0) doit: roomNum)
-		(if
-			(and
-				(!= (- (MemoryInfo FreeHeap) 2) (MemoryInfo LargestPtr))
-				(Prints {Memory fragmented.})
+	(method (startRoom n)
+		(if modelessDialog (modelessDialog dispose:))
+		((ScriptID DISPOSE 0) doit: n)
+		; Check for frags
+		(if (and	(!= (- (MemoryInfo FreeHeap) 2)
+					(MemoryInfo LargestPtr))
+				(Print
+					addText: N_MEM_FRAGMENTED NULL NULL 1 0 0 MAIN
+					addButton: FALSE N_MEM_FRAGMENTED NULL NULL 2 0 12 MAIN
+					addButton: TRUE N_MEM_FRAGMENTED NULL NULL 3 70 12 MAIN
+					init:
+				)
 			)
-			(theGame showMem:)
 			(SetDebug)
 		)
 		(if debugging
 			((ScriptID DEBUG 0) init:)
 		)
-		(statusLine doit: roomNum)
-		(super startRoom: roomNum)
-		(if
-			(and
-				(ego cycler?)
-				(not (ego looper?))
-				((ego cycler?) isKindOf: StopWalk)
+		(super startRoom: n)
+	)
+
+	(method (pragmaFail &tmp theVerb)
+		;nobody responds to user input
+		(if modelessDialog
+			(modelessDialog dispose:)
+		)
+		(if (user canInput:)
+			(= theVerb ((user curEvent?) message?))
+			(if (OneOf theVerb V_DO V_LOOK V_TALK)
+				(messager say: N_PRAGFAIL theVerb NULL 1 0 MAIN)
+			else ;non-handled verb
+				(messager say: N_PRAGFAIL V_COMBINE NULL 1 0 MAIN)
 			)
-			(ego setLoop: stopGroop)
 		)
 	)
 
@@ -319,28 +314,16 @@
 					(switch (event message?)
 						(TAB
 							(if (not (& ((theIconBar at: ICON_INVENTORY) signal?) DISABLED))
-								(if fastCast
-									(return fastCast)
-								)
 								(ego showInv:)
-								(event claimed: TRUE)
 							)
 						)
-						(`^q
-							(theGame quitGame:)
-							(event claimed: TRUE)
-						)
-						(`^c
-							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
-								(if fastCast
-									(return fastCast)
-								)
-								(theGame showControls:)
-								(event claimed: TRUE)
+						(SHIFTTAB
+							(if (not (& ((theIconBar at: ICON_INVENTORY) signal?) DISABLED))
+								(ego showInv:)
 							)
 						)
 						(`#2
-							(cond 
+							(cond
 								((theGame masterVolume:)
 									(theGame masterVolume: 0)
 								)
@@ -355,21 +338,25 @@
 						)
 						(`#5
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
-								(if fastCast
-									(return fastCast)
-								)
+								(if fastCast (return))
 								(theGame save:)
 								(event claimed: TRUE)
 							)
 						)
-						(`#6
+						(`#7
 							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
-								(if fastCast
-									(return fastCast)
-								)
+								(if fastCast (return))
 								(theGame restore:)
 								(event claimed: TRUE)
 							)
+						)
+						(`#9
+							(theGame restart:)
+							(event claimed: TRUE)
+						)
+						(`^q
+							(theGame quitGame:)
+							(event claimed: TRUE)
 						)
 					)
 				)
@@ -378,9 +365,8 @@
 	)
 	
 	(method (setCursor cursorObj tOrF theX theY &tmp oldCurObj moveToX moveToY)
-		;this is the same as the original setCursor method
-		;but, the cursors are objects now.
-		;For reference, see cursor.sc
+		;this is the same as the original setCursor method,
+		;but the cursors are objects now.
 
 		(= oldCurObj theCursor)
 		(= theCursor cursorObj)
@@ -400,17 +386,6 @@
 		(return oldCurObj)
 	)
 	
-	(method (showControls &tmp oldCur)
-		(theIconBar hide:)
-		(= oldCur ((theIconBar curIcon?) cursor?))
-		(theGame setCursor: normalCursor TRUE)
-		(gameControls
-			window: (ScriptID GAME_CONTROLS 1)
-			show:
-		)
-		(theGame setCursor: oldCur TRUE)		
-	)
-	
 	(method (solvePuzzle pValue pFlag)
 		;Adds an amount to the player's current score.
 		;It checks if a certain flag is set so that the points are awarded only once.
@@ -418,10 +393,9 @@
 			(return)
 		)
 		(if pValue
-			(+= score pValue)
+			(theGame changeScore: pValue)
 			(if (and (> argc 1) pFlag)
 				(gameFlags set: pFlag)
-				(statusLine doit: curRoomNum)
 				(pointsSound play:)
 			)
 		)
@@ -445,44 +419,46 @@
 	)
 
 	(method (quitGame)
-		;if a parameter is given, skip the dialog and quit immediately		
-		(if argc
+		(if (YesNoDialog N_QUITGAME)
 			(super quitGame:)
-		else
-			;the game's quit dialog
-			(if (YesNoDialog N_QUITGAME)
-				(super quitGame:)
-			)
 		)
 	)
-	
-	(method (pragmaFail &tmp theVerb)
-		;nobody responds to user input
-		(if modelessDialog
-			(modelessDialog dispose:)
+
+	;this must be used to bring up the control panel
+	; to ensure that it always displays correctly.
+	(method (showControls &tmp oldCur)
+		(theIconBar hide:)
+		(= oldCur ((theIconBar curIcon?) cursor?))
+		(theGame setCursor: normalCursor TRUE)
+		(gameControls
+			window: (ScriptID GAME_CONTROLS 1)
+			show:
 		)
-		(if (user canInput:)
-			(= theVerb ((user curEvent?) message?))
-			(if (OneOf theVerb V_DO V_LOOK V_TALK)
-				(messager say: N_PRAGFAIL theVerb NULL 1 0 MAIN)
-			else ;non-handled verb
-				(messager say: N_PRAGFAIL V_COMBINE NULL 1 0 MAIN)
-			)
+		(theGame setCursor: oldCur TRUE)		
+	)
+)
+
+(instance gameDoVerbCode of Code
+	;if there is no corresponding message for an object and verb, bring up a default message.
+	(method (doit theVerb)
+		(if (OneOf theVerb V_LOOK V_DO V_TALK)
+			(messager say: N_VERB_GENERIC theVerb NULL 1 0 MAIN)
+		else ;non-handled verb
+			(messager say: N_VERB_GENERIC V_COMBINE NULL 1 0 MAIN)
 		)
 	)
 )
 
-(instance statusCode of Code
-	(method (doit roomNum &tmp [statusBuf 50] [scoreBuf 50])
-		(if
-			;add rooms where the status line is not shown
-			(not (OneOf roomNum 
-					TITLE SPEED_TEST WHERE_TO DEATH
-				 )
-			)
-			(Message MsgGet MAIN N_STATUSLINE NULL NULL 1 @statusBuf)
-			(Format @scoreBuf @statusBuf score possibleScore)
-			(DrawStatus @scoreBuf 23 0)
+(instance gameFtrInit of Code		; sets up defaults
+	(method (doit theObj)
+		; angle used by facingMe
+		(if (== (theObj sightAngle?) ftrDefault)
+			(theObj sightAngle: 90)
+		)
+		; maximum distance to get an object (for example.)
+		; instance of Action or EventHandler with Actions
+		(if (== (theObj actions?) ftrDefault)
+			(theObj actions: 0)
 		)
 	)
 )
@@ -504,17 +480,6 @@
 	)
 )
 
-(instance gameDoVerbCode of Code
-	;if there is no corresponding message for an object and verb, bring up a default message.
-	(method (doit theVerb)
-		(if (OneOf theVerb V_LOOK V_DO V_TALK)
-			(messager say: N_VERB_GENERIC theVerb NULL 1 0 MAIN)
-		else ;non-handled verb
-			(messager say: N_VERB_GENERIC V_COMBINE NULL 1 0 MAIN)
-		)
-	)
-)
-
 (instance gameApproachCode of Code
 	(method (doit theVerb)
 		(switch theVerb
@@ -528,62 +493,100 @@
 )
 
 (instance gameHandsOff of Code
+	;Disable ego control
 	(method (doit)
-		(if (not oldCurIcon)
-			(= oldCurIcon (theIconBar curIcon?))
+		(if (not theCurIcon)	; don't want to save it twice!
+			(= theCurIcon (theIconBar curIcon?))
 		)
-		(user canControl: FALSE canInput: FALSE)
+		
+		(= isHandsOff TRUE)
+		(user
+			canControl: FALSE
+			canInput: FALSE
+		)
 		(ego setMotion: 0)
-		(= disabledIcons NULL)
-		(theIconBar
-			eachElementDo: #perform checkIcon
-			curIcon: (theIconBar at: ICON_CONTROL)
-			disable:
-				ICON_WALK
-				ICON_LOOK
-				ICON_DO
-				ICON_TALK
-				ICON_CURITEM
-				ICON_INVENTORY
+		
+		; save the state of each icon so we can put the icon bar back the way it was
+		(= iconSettings 0)
+		(theIconBar eachElementDo: #perform checkIcon)
+	
+		; disable some icons so user doesn't screw us up
+		(theIconBar disable:
+			ICON_WALK
+			ICON_LOOK
+			ICON_DO
+			ICON_TALK
+			ICON_ITEM
+			ICON_INVENTORY
 		)
+		
+		; if no mouse, move the cursor out of the way, but save the initial
+		; posn so HandsOn can restore it	
 		(if (not (HaveMouse))
-			(theGame setCursor: INVIS_CURSOR)
+			(= saveCursorX ((user curEvent?) x?))
+			(= saveCursorY ((user curEvent?) y?))
+			(theGame setCursor: waitCursor TRUE 310 185)
 		else
-			(theGame setCursor: waitCursor)
+			(theGame setCursor: waitCursor TRUE)
 		)
 	)
 )
 
 (instance gameHandsOn of Code
 	(method (doit)
-		(user canControl: TRUE canInput: TRUE)
+		;Enable ego control
+		(= isHandsOff FALSE)
+		(User
+			canControl: TRUE
+			canInput: TRUE
+		)
+		
+		; re-enable iconbar
 		(theIconBar enable:
 			ICON_WALK
 			ICON_LOOK
 			ICON_DO
 			ICON_TALK
-			ICON_CURITEM
+			ICON_ITEM
 			ICON_INVENTORY
-		)
-		(if (not (curRoom inset:))
-			(theIconBar enable: ICON_CONTROL)
+			ICON_CONTROL
+			ICON_HELP
 		)
 		(if (not (theIconBar curInvIcon?))
-			(theIconBar disable: ICON_CURITEM)
+			(theIconBar disable: ICON_ITEM)
 		)
-		(if oldCurIcon
-			(theIconBar curIcon: oldCurIcon)
-			(theGame setCursor: (oldCurIcon cursor?))
-			(if
-				(and
-					(== (theIconBar curIcon?) (theIconBar at: ICON_CURITEM))
-					(not (theIconBar curInvIcon?))
-				)
+	
+		(if theCurIcon
+			(theIconBar curIcon: theCurIcon)
+			(theGame setCursor: ((theIconBar curIcon?) cursor?))
+			(= theCurIcon 0)
+			(if (and	(== (theIconBar curIcon?) (theIconBar at: ICON_ITEM))
+						(not (theIconBar curInvIcon?))
+					)
 				(theIconBar advanceCurIcon:)
 			)
+		)	
+		
+		; restore cursor xy posn if no mouse
+		(if (not (HaveMouse))
+			(theGame setCursor:
+				((theIconBar curIcon?) cursor?) TRUE saveCursorX saveCursorY
+			)
+		else
+			(theGame setCursor:
+				((theIconBar curIcon?) cursor?) TRUE
+			)
 		)
-		(= oldCurIcon 0)
-		(theGame setCursor: ((theIconBar curIcon?) cursor?) TRUE)
+	)
+)
+
+(instance checkIcon of Code
+	(method (doit theIcon)
+		(if (theIcon isKindOf: IconItem)		; It's an icon
+			(if (& (theIcon signal?) DISABLED)
+				(|= iconSettings (>> $8000 (theIconBar indexOf: theIcon)))
+			)
+		)
 	)
 )
 
@@ -592,51 +595,3 @@
 		size NUMFLAGS
 	)
 )
-
-(instance theWaitCursor of Cursor
-	(properties
-		view	HAND_CURSOR
-	)
-)
-
-(instance theArrowCursor of Cursor
-	(properties
-		view	ARROW_CURSOR
-	)
-)
-
-(instance theGlobalSound of Sound
-	(properties
-		flags mNOPAUSE
-	)
-)
-(instance musicSound of Sound
-	(properties
-		flags mNOPAUSE
-	)
-)
-(instance soundEffects of Sound
-	(properties
-		flags mNOPAUSE
-	)
-)
-(instance pointsSound of Sound
-	(properties
-		number sPoints
-		flags mNOPAUSE
-	)
-)
-
-(instance checkIcon of Code
-	(method (doit theIcon)
-		(if
-			(and
-				(theIcon isKindOf: IconItem)
-				(& (theIcon signal?) DISABLED)
-			)
-			(|= disabledIcons (>> $8000 (theIconBar indexOf: theIcon)))
-		)
-	)
-)
-
-(instance stopGroop of GradualLooper)

@@ -19,4 +19,8 @@
 
 ;;; CASES
 
+(define C_TEXT_MODE 1)
+(define C_SPEECH_MODE 2)
+(define C_DUAL_MODE 3)
+(define C_CURRENT_MODE 4)
 

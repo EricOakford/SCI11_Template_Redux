@@ -2,16 +2,17 @@
 ;**************************************************************
 ;***
 ;***	GAME.SH--
+;***	Put all the defines specific to your game in here
 ;***
 ;**************************************************************
 
 
-(include pics.sh) (include views.sh) ;graphical defines
+(include graphics.sh) ;graphical defines
 (include system.sh) (include sci2.sh) ;system and kernel functions
 (include talkers.sh) (include verbs.sh) ;message defines
+
 ;
 ; Global stuff
-
 (define	MAIN			0)
 (define GAME_WINDOW		1)
 (define	DODISP			2)
@@ -26,54 +27,65 @@
 (define GAME_ICONBAR	11)
 (define GAME_INIT		12)
 (define WHERE_TO		13)
-(define DISPOSE_CODE	14)
+(define DISPOSE			14)
+(define PROCS			15)
+(define COLOR_INIT		16)
 
 ;
 ; Actual rooms
-(define	TITLE			100)
-(define ROOM101			101)
-(define	TESTROOM		110)
+(define rTitle			100)
+(define rTestRoom		110)
 
+;
 ; Indices for the icons in the icon bar
 (enum
 	ICON_WALK
 	ICON_LOOK
 	ICON_DO
 	ICON_TALK
-	ICON_CUSTOM
-	ICON_CURITEM
+	ICON_ITEM
 	ICON_INVENTORY
 	ICON_CONTROL
 	ICON_HELP
+	ICON_SCORE
 )
 
-;Inventory items
+;
+; Inventory items
+;Make sure they are in the same order you put them in the inventory list in GAME_INV.SC.
+;To avoid name conflicts, prefix the items with the letter "i".
 (enum
 	iMoney
 	iLastInvItem	;this MUST be last
 )
 ;(define NUM_INVITEMS (- iLastInvItem 1))
 
-;Sound defines
-(define sDeath 10)
-(define sPoints 950)
-
-;Death reasons
+;
+; Death reasons
 (enum 1
 	deathGENERIC
 )
 
-;Flag handler defines
-;NOTE: These are intended to replace the Bset, Btst, and Bclr procedures.
+;
+; Sound defines
+(define sOpening	1)
+(define sDeath		2)
+(define sScore		3)
+
+; Event flags
+	;These flags are used by Bset, Btst, and Bclr.
+	;Example: fBabaFrog (original Sierra naming)
+(define NUMFLAGS 128)	;used for the Flags objects. If you need more flags, increase this.
+
+;Event flags
+(enum
+	fIsVGA
+)
+
+;NOTE: These are intended to replace various procedures.
 ;However, SCICompanion does not yet support macro defines.
 ;;;(define Bset	gameFlags set:)
 ;;;(define Btst	gameFlags test:)
 ;;;(define Bclr	gameFlags clear:)
-(define NUMFLAGS 128)
-
-;Event flags
-(enum
-	fInMainGame
-	fAutoSaveOn
-	fWonGame
-)
+;;;(define SolvePuzzle theGame solvePuzzle:)
+;;;(define NormalEgo ego normalize:) 

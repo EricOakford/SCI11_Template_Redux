@@ -25,9 +25,10 @@
 (script# GAME_INV)
 (include game.sh) (include "6.shm")
 (use Main)
-(use BordWind)
-(use Print)
+(use Procs)
 (use IconBar)
+(use Print)
+(use BordWind)
 (use Invent)
 (use System)
 
@@ -48,17 +49,14 @@
 	;This is the game-specific inventory	
 	(method (init)
 		((= inventory self)
-			window: invWin
-			helpIconItem: invHelp
-			selectIcon: invSelect
-			okButton: ok
 			add:
-			;add inventory items here
+				;Add your inventory items here.
+				;Make sure they are in the same order as the item list in GAME.SH.
 				(Money setCursor: vInvItems lInvCursors iMoney yourself:)
+			;add the interface buttons afterwards
 			add:
-			;add icons here
-				invLook
-				invHand
+				(invLook cursor: lookCursor yourself:)
+				(invHand cursor: doCursor yourself:)
 				invSelect
 				invMore
 				invHelp
@@ -66,9 +64,28 @@
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
 			state: NOCLICKHELP
+			window:	invWin
+			helpIconItem:	invHelp
+			selectIcon:	invSelect
+			okButton:	ok
 		)
 		(ego get: iMoney)
+		;set up the inventory window
+		(invWin
+			color: 0
+			back: colGray2
+			topBordColor: colGray4
+			lftBordColor: colGray3
+			rgtBordColor: colGray1
+			botBordColor: colBlack
+			insideColor: colGray1
+			topBordColor2: colBlack
+			lftBordColor2: colBlack
+			botBordColor2: colGray4
+			rgtBordColor2: colGray5
+		)
 	)
+
 )
 
 (instance invWin of InsetWindow
@@ -236,11 +253,6 @@
 		noun N_LOOK
 		helpVerb V_HELP
 	)
-	
-	(method (init)
-		(= cursor lookCursor)
-		(super init:)
-	)
 )
 
 (instance invHand of GameIconItem
@@ -251,11 +263,6 @@
 		message V_DO
 		noun N_HAND
 		helpVerb V_HELP
-	)
-	
-	(method (init)
-		(= cursor doCursor)
-		(super init:)
 	)
 )
 
@@ -340,24 +347,24 @@
 
 (instance lookCursor of Cursor
 	(properties
-		view vIconBar
-		loop lLookIcon
+		view vIcons
+		loop lIconLook
 		cel 2
 	)
 )
 
 (instance doCursor of Cursor
 	(properties
-		view vIconBar
-		loop lDoIcon
+		view vIcons
+		loop lIconHand
 		cel 2
 	)
 )
 
 (instance helpCursor of Cursor
 	(properties
-		view vIconBar
-		loop lHelpIcon
+		view vIcons
+		loop lIconHelp
 		cel 2
 	)
 )

@@ -10,173 +10,108 @@
 (script# GAME_ICONBAR)
 (include game.sh) (include "11.shm")
 (use Main)
+(use Intrface)
+(use Procs)
 (use IconBar)
 (use System)
 
 (public
-	mainIconBar 0
+	iconCode 0
 )
 
-(instance mainIconBar of IconBar
-	(method (init)
-		((= theIconBar self)
+(instance iconCode of Code
+	(method (doit)
+		((= theIconBar IconBar)
 			add:
 			;These correspond to ICON_*** in game.sh
-				iconWalk iconLook iconDo iconTalk iconCustom
-				iconUseIt iconInventory iconControlPanel iconHelp
+				(iconWalk cursor: walkCursor yourself:)
+				(iconLook cursor: lookCursor yourself:)
+				(iconDo cursor: doCursor yourself:)
+				(iconTalk cursor: talkCursor yourself:)
+				iconUseIt iconInventory iconControlPanel
+				(iconHelp cursor: helpCursor yourself:)
+				iconScore
 			eachElementDo: #init
-			eachElementDo: #lowlightColor 5
+			eachElementDo: #highlightColor colBlack
+			eachElementDo: #lowlightColor colGray4
 			eachElementDo: #modNum GAME_ICONBAR
-			curIcon: iconLook
+			curIcon: iconWalk
 			useIconItem: iconUseIt
 			helpIconItem: iconHelp
 			walkIconItem: iconWalk
 			state: (| OPENIFONME NOCLICKHELP)
 		)
+		(iconInventory message: (if (HaveMouse) TAB else SHIFTTAB))
 	)
 )
 
 (instance iconWalk of IconItem
 	(properties
-		view vIconBar
-		loop lWalkIcon
+		view vIcons
+		loop lIconWalk
 		cel 0
 		type (| userEvent walkEvent)
 		message V_WALK
 		signal (| HIDEBAR RELVERIFY)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		noun N_WALK
 		helpVerb V_HELP
-	)
-	
-	(method (init)
-		(= cursor walkCursor)
-		(super init:)
-	)
-	
-	(method (select)
-		(return
-			(if (super select: &rest)
-				(theIconBar hide:)
-				(return TRUE)
-			else
-				(return FALSE)
-			)
-		)
 	)
 )
 
 (instance iconLook of IconItem
 	(properties
-		view vIconBar
-		loop lLookIcon
+		view vIcons
+		loop lIconLook
 		cel 0
 		message V_LOOK
 		signal (| HIDEBAR RELVERIFY)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		noun N_LOOK
 		helpVerb V_HELP
-	)
-	
-	(method (init)
-		(= cursor lookCursor)
-		(super init:)
 	)
 )
 
 (instance iconDo of IconItem
 	(properties
-		view vIconBar
-		loop lDoIcon
+		view vIcons
+		loop lIconHand
 		cel 0
 		message V_DO
 		signal (| HIDEBAR RELVERIFY)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		noun N_DO
 		helpVerb V_HELP
-	)
-	
-	(method (init)
-		(= cursor doCursor)
-		(super init:)
 	)
 )
 
 (instance iconTalk of IconItem
 	(properties
-		view vIconBar
-		loop lTalkIcon
+		view vIcons
+		loop lIconTalk
 		cel 0
 		message V_TALK
 		signal (| HIDEBAR RELVERIFY)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		noun N_TALK
 		helpVerb V_HELP
 	)
-	
-	(method (init)
-		(= cursor talkCursor)
-		(super init:)
-	)
 )
-
-(instance iconCustom of IconItem
-	(properties
-		view vIconBar
-		loop lCustomIcon
-		cel 0
-		cursor ARROW_CURSOR
-		message 0
-		signal (| HIDEBAR RELVERIFY DISABLED)
-		maskView vIconBar
-		maskLoop lDisabledIcon
-		noun N_CUSTOM
-		helpVerb V_HELP
-	)
-	
-	(method (select)
-		(return FALSE)
-	)
-)
-
-;;;(instance iconScore of IconItem
-;;;	(properties
-;;;		view vIconBar
-;;;		loop lScoreIcon
-;;;		cel 0
-;;;		cursor ARROW_CURSOR
-;;;		signal (| HIDEBAR RELVERIFY IMMEDIATE)
-;;;		maskView vIconBar
-;;;		maskLoop lScoreIcon
-;;;		noun N_SCORE
-;;;		helpVerb V_HELP
-;;;	)
-;;;	
-;;;	(method (show &tmp [str 7] [temp7 4])
-;;;		(super show: &rest)
-;;;		(Format @str "%d/%d" score possibleScore)
-;;;		(TextSize @temp7 @str scoreFont 0)
-;;;		(Display @str p_color 255
-;;;			p_font scoreFont
-;;;			p_at (+ (- nsLeft 8) (/ (- 50 [temp7 3]) 2)) (+ nsTop 13)
-;;;		)
-;;;	)
-;;;)
 
 (instance iconUseIt of IconItem
 	(properties
-		view vIconBar
-		loop lItemIcon
+		view vIcons
+		loop lIconInvItem
 		cel 0
 		cursor ARROW_CURSOR
 		message 0
 		signal (| HIDEBAR RELVERIFY)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		maskCel 4
 		noun N_CURITEM
 		helpVerb V_HELP
@@ -185,15 +120,16 @@
 
 (instance iconInventory of IconItem
 	(properties
-		view vIconBar
-		loop lInvIcon
+		view vIcons
+		loop lIconInventory
 		cel 0
 		cursor ARROW_CURSOR
-		type nullEvt
-		message 0
+		type NULL
+		message NULL
 		signal (| HIDEBAR RELVERIFY IMMEDIATE)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
+		maskCel 3
 		noun N_INVENTORY
 		helpVerb V_HELP
 	)
@@ -210,16 +146,45 @@
 	)
 )
 
+(instance iconScore of IconItem
+	(properties
+		view vIcons
+		loop lIconScore
+		cel 0
+		cursor ARROW_CURSOR
+		signal (| HIDEBAR RELVERIFY IMMEDIATE)
+		maskView vIcons
+		maskLoop lIconScore
+		maskCel 1
+		noun N_SCORE
+		helpVerb V_HELP
+	)
+	
+	(method (show &tmp [str 7] [rectPt 4] theFont)
+		(super show: &rest)
+		(= theFont 30)
+		(Format @str "%d" score)
+		(TextSize @rectPt @str theFont 0)
+		(Display @str
+			p_color colLRed
+			p_font theFont
+			p_at
+				(+ nsLeft 5 (/ (- 25 [rectPt 3]) 2))
+				(+ nsTop 14)
+		)
+	)
+)
+
 (instance iconControlPanel of IconItem
 	(properties
-		view vIconBar
-		loop lControlIcon
+		view vIcons
+		loop lIconControls
 		cel 0
 		cursor ARROW_CURSOR
 		message V_CONTROL
 		signal (| HIDEBAR RELVERIFY IMMEDIATE)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
 		noun N_CONTROL
 		helpVerb V_HELP
 	)
@@ -238,60 +203,56 @@
 
 (instance iconHelp of IconItem
 	(properties
-		view vIconBar
-		loop lHelpIcon
+		view vIcons
+		loop lIconHelp
 		cel 0
 		type helpEvent
 		message V_HELP
 		signal (| RELVERIFY IMMEDIATE)
-		maskView vIconBar
-		maskLoop lDisabledIcon
+		maskView vIcons
+		maskLoop lIconDisabled
+		maskCel 1
 		noun N_HELP
 		helpVerb V_HELP
-	)
-	
-	(method (init)
-		(= cursor helpCursor)
-		(super init:)
 	)
 )
 
 (instance walkCursor of Cursor
 	(properties
-		view vIconBar
-		loop lWalkIcon
+		view vIcons
+		loop lIconWalk
 		cel 2
 	)
 )
 
 (instance lookCursor of Cursor
 	(properties
-		view vIconBar
-		loop lLookIcon
+		view vIcons
+		loop lIconLook
 		cel 2
 	)
 )
 
 (instance doCursor of Cursor
 	(properties
-		view vIconBar
-		loop lDoIcon
+		view vIcons
+		loop lIconHand
 		cel 2
 	)
 )
 
 (instance talkCursor of Cursor
 	(properties
-		view vIconBar
-		loop lTalkIcon
+		view vIcons
+		loop lIconTalk
 		cel 2
 	)
 )
 
 (instance helpCursor of Cursor
 	(properties
-		view vIconBar
-		loop lHelpIcon
+		view vIcons
+		loop lIconHelp
 		cel 2
 	)
 )

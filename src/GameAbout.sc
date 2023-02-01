@@ -20,7 +20,6 @@
 )
 
 (instance aboutCode of Code
-
 	(method (doit)
 		(= oldCur ((theIconBar curIcon?) cursor?))
 		(theGame setCursor: normalCursor)
@@ -30,7 +29,6 @@
 	
 	(method (dispose)
 		(theGame setCursor: oldCur)
-		(DisposeScript DCICON)
 		(DisposeScript GAME_ABOUT)
 	)
 )

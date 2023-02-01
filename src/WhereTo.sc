@@ -19,7 +19,7 @@
 
 (instance whereTo of Room
 	(properties
-		picture pSpeedTest
+		picture vSpeedTest
 	)
 	
 	(method (init &tmp [str 10] nextRoom)
@@ -33,7 +33,7 @@
 				init:
 			)
 		)
-		(= nextRoom TITLE)
+		(= nextRoom rTitle)
 		(if str
 			(= nextRoom (ReadNumber @str))
 		)
