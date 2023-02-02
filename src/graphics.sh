@@ -41,7 +41,7 @@
 		lIconHelp
 		lIconDisabled
 	)	
-(define vInvIcons 991)
+(define vInvIcons 901)
 	(enum
 		lInvHand
 		lInvHelp
