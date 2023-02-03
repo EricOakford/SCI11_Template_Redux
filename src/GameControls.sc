@@ -12,8 +12,8 @@
 (use Window)
 (use IconBar)
 (use Procs)
-(use SlideIcon)
 (use GControl)
+(use SlideIcon)
 (use System)
 
 (public
@@ -75,40 +75,57 @@
 					selector: #showAbout
 					yourself:
 				)
-				;iconTextSwitch	;comment this out if you do not intend to have speech in your game
+				iconTextSwitch	;comment this out if you do not intend to have speech in your game
 				(iconControlHelp
 					cursor: helpCursor
 					yourself:
 				)
-			helpIconItem: iconControlHelp
-			curIcon: iconRestore
-			okButton: iconOk
 			eachElementDo: #highlightColor colBlack
 			eachElementDo: #lowlightColor colGray4
 			eachElementDo: #modNum GAME_CONTROLS
+			helpIconItem: iconControlHelp
+			curIcon: iconRestore
+			okButton: iconOk
+			eachElementDo: #highlightColor 0
+			eachElementDo: #lowlightColor colGray4
 			state: NOCLICKHELP
 		)
 	)
 )
 
-(define	SLIDER_TOP	37)
-(define SLIDER_LEFT	67)
-(define BUTTON_TOP 6)
-(define BUTTON_LEFT 8)
+(define SLIDER_TITLE_TOP	37)
+(define SLIDER_TOP 73)
+(define SLIDER_LEFT 139)
+(define SLIDDIST 40)
+(define BUTTON_TOP 42)
+(define BUTTON_LEFT 80)
+
+(define MSG_BUTTON_X 162)
+(define MSG_BUTTON_Y 160)
 
 (instance gcWin of BorderWindow
 	(method (open &tmp
-			theBevelWid t l r b theColor theMaps bottomColor topColor leftColor rightColor
-			thePri i [str 20] [msgBuf 20] [rectPt 34] fixtureCel
-			)
+			savePort theBevelWid t l r b theColor theMaps
+			bottomColor topColor leftColor rightColor thePri i
+			theCel
+			[str 15] [rectPt 4]
+		)
+		(= thePri -1)
+		;if iconTextSwitch isn't commented out, let's assume it's
+		; a talkie game, and load the correct cel for the extra button
+		(if (gameControls contains: iconTextSwitch)
+			(= theCel 2)
+		else
+			(= theCel 1)
+		)
 		(self
 			top: (/ (- SCRNHIGH (+ (CelHigh vGameControls lControlFixtures 1) 6)) 2)
 			left: (/ (- SCRNWIDE (+ 151 (CelWide vGameControls lSliderText 1))) 2)
 			bottom:
 				(+
-					(CelHigh vGameControls lControlFixtures 1)
+					(CelHigh vGameControls lControlFixtures theCel)
 					6
-					(/ (- SCRNHIGH (+ (CelHigh vGameControls lControlFixtures 1) 6)) 2)
+					(/ (- SCRNHIGH (+ (CelHigh vGameControls lControlFixtures theCel) 6)) 2)
 				)
 			right:
 				(+
@@ -116,7 +133,7 @@
 					(CelWide vGameControls lSliderText 1)
 					(/ (- SCRNWIDE (+ 151 (CelWide vGameControls lSliderText 1))) 2)
 				)
-			priority: 15
+			priority: thePri
 		)
 		(super open:)
 		
@@ -125,7 +142,7 @@
 			(+
 				(/
 					(-
-						(- (+ 151 (CelWide vGameControls lSliderText 1)) (+ 4 (CelWide vGameControls lControlFixtures 1)))
+						(- (+ 151 (CelWide vGameControls lSliderText 1)) (+ 4 (CelWide vGameControls lControlFixtures theCel)))
 						(CelWide vGameControls lSliderText 5)
 					)
 					2
@@ -134,29 +151,25 @@
 				(CelWide vGameControls lControlFixtures 1)
 			)
 			3
-			15
+			thePri
 		)
-
-		; Box for buttons.
-		; if iconTextSwitch is not commented out, assume it's a talkie game,
-		; so use the correct cel for the button box.
-		(if (gameControls contains: iconTextSwitch)
-			(= fixtureCel 2)
-		else
-			(= fixtureCel 1)
-		)
-		(DrawCel vGameControls lControlFixtures fixtureCel 4 3 15)
+		; Box for buttons
+		(DrawCel vGameControls lControlFixtures theCel 4 3 thePri)
 		; 1st arrow between sliders
-		(DrawCel vGameControls lControlFixtures 0 94 38 15)
+		(DrawCel vGameControls lControlFixtures 0 94 38 thePri)
 		; 2nd arrow between sliders
-		(DrawCel vGameControls lControlFixtures 0 135 38 15)
+		(DrawCel vGameControls lControlFixtures 0 135 38 thePri)
 		; Detail text
-		(DrawCel vGameControls lSliderText 4 63 (- SLIDER_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) 15)
+		(DrawCel vGameControls lSliderText 4 63 (- SLIDER_TITLE_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) thePri)
 		; Volume text
-		(DrawCel vGameControls lSliderText 3 101 (- SLIDER_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) 15)
+		(DrawCel vGameControls lSliderText 3 101 (- SLIDER_TITLE_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) thePri)
 		; Speed text
-		(DrawCel vGameControls lSliderText 2 146 (- SLIDER_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) 15)
-		(= b (+ (= t (+ 49 (CelHigh vGameControls lSliderText 1))) 26))
+		(DrawCel vGameControls lSliderText 2 146 (- SLIDER_TITLE_TOP (+ (CelHigh vGameControls lSliderText 4) 3)) thePri)
+
+		;Now draw the window below the sliders for score
+		(Graph GShowBits 12 1 15 (+ 151 (CelWide vGameControls lSliderText 1)) 1)
+		
+				(= b (+ (= t (+ 46 (CelHigh vGameControls lSliderText 1))) 13))
 		(= r
 			(+
 				(= l (+ 10 (CelWide vGameControls lControlFixtures 1)))
@@ -166,14 +179,15 @@
 				)
 			)
 		)
-		(= thePri 15)
 		(= theColor 0)
 		(= bottomColor colGray2)
 		(= rightColor colGray3)
 		(= leftColor colGray5)
 		(= topColor colWhite)
 		(= theBevelWid 3)
-		(= theMaps 3)
+		(= theMaps VMAP)
+		
+		;draw the bevels
 		(Graph GFillRect t l (+ b 1) (+ r 1) theMaps theColor thePri)
 		(-= t theBevelWid)
 		(-= l theBevelWid)
@@ -183,37 +197,32 @@
 		(Graph GFillRect (- b theBevelWid) l b r theMaps topColor thePri)
 		(for ((= i 0)) (< i theBevelWid) ((++ i))
 			(Graph GDrawLine (+ t i) (+ l i) (- b (+ i 1)) (+ l i) rightColor thePri -1)
-			(Graph GDrawLine (+ t i) (- r (+ i 1)) (- b (+ i 1)) (- r (+ i 1)) leftColor thePri -1)
+			(Graph GDrawLine (+ t i)(- r (+ i 1)) (- b (+ i 1)) (- r (+ i 1)) leftColor thePri -1)
 		)
 		(Graph GShowBits t l (+ b 1) (+ r 1) 1)
-		(Message MsgGet GAME_CONTROLS N_SCORE NULL NULL 1 @msgBuf)
-		(Format @str @msgBuf score possibleScore)
+		
+		;print the score centered in its window
+		(Format @str "Score: %d of %d" score possibleScore)
 		(TextSize @rectPt @str 999 0)
 		(Display @str
 			p_font 999
-			p_color colGray5
+			p_color colGray4
 			p_at
-			(+
-				10
-				(CelWide vGameControls lControlFixtures fixtureCel)
+			(+ 10 (CelWide vGameControls lControlFixtures 1)
 				(/
 					(-
 						(-
 							(+ 151 (CelWide vGameControls lSliderText 1))
-							(+ 10 (CelWide vGameControls lControlFixtures fixtureCel) 6)
+							(+ 10 (CelWide vGameControls lControlFixtures 1) 6)
 						)
 						[rectPt 3]
 					)
 					2
 				)
 			)
-			;keep the text centered whether it's a talkie game or not
-			(if (gameControls contains: iconTextSwitch)
-				(+ 49 (CelHigh vGameControls lSliderText 1) 3 10)
-			else
-				(+ 49 (CelHigh vGameControls lSliderText 1) 3 6)
-			)
+			(+ 46 (CelHigh vGameControls lSliderText 1) 3)
 		)
+		(SetPort 0)
 	)
 )
 
@@ -237,7 +246,7 @@
 		view vGameControls
 		loop lSliderText
 		cel 1
-		nsLeft (+ SLIDER_LEFT 40)
+		nsLeft (+ SLIDER_LEFT SLIDDIST)
 		nsTop SLIDER_TOP
 		signal FIXED_POSN
 		noun N_VOLUME
@@ -246,13 +255,13 @@
 		topValue 15
 	)
 )
-
+	
 (instance speedSlider of Slider
 	(properties
 		view vGameControls
 		loop lSliderText
 		cel 1
-		nsLeft (+ SLIDER_LEFT (* 2 40))
+		nsLeft (+ SLIDER_LEFT (* 2 SLIDDIST))
 		nsTop SLIDER_TOP
 		signal FIXED_POSN
 		noun N_SPEED
@@ -312,7 +321,7 @@
 		loop lRestartButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP (* 20 2))
+		nsTop (+ BUTTON_TOP 40)
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTART
 		helpVerb V_HELP
@@ -325,7 +334,7 @@
 		loop lQuitButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP (* 20 3))
+		nsTop (+ BUTTON_TOP 60)
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_QUIT
 		helpVerb V_HELP
@@ -337,22 +346,21 @@
 		view vGameControls
 		loop lAboutButton
 		cel 0
-		nsLeft (+ BUTTON_LEFT 26)
-		nsTop (+ BUTTON_TOP (* 20 4))
+		nsLeft BUTTON_LEFT
+		nsTop (+ BUTTON_TOP 80)
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_ABOUT
 		helpVerb V_HELP
 	)
 )
 
-(instance iconControlHelp of IconItem
+(instance iconControlHelp of ControlIcon
 	(properties
 		view vGameControls
 		loop lHelpButton
 		cel 0
-		type helpEvent
-		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP (* 20 4))
+		nsLeft (+ BUTTON_LEFT 26)
+		nsTop (+ BUTTON_TOP 80)
 		message V_HELP
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_HELP
@@ -360,13 +368,13 @@
 	)
 )
 
-(instance iconOk of IconItem
+(instance iconOk of ControlIcon
 	(properties
 		view vGameControls
 		loop lOKButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP (* 20 5))
+		nsTop (+ BUTTON_TOP 100)
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_OK
 		helpVerb V_HELP
@@ -376,10 +384,10 @@
 (instance iconTextSwitch of IconItem
 	(properties
 		view vGameControls
-		loop lTextMode
+		loop lModeButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP (* 20 6))
+		nsTop (+ BUTTON_TOP 120)
 		cursor ARROW_CURSOR
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_MSGMODE
@@ -403,47 +411,24 @@
 		(self show:)
 	)
 	
-	(method (show &tmp [str 25] [rect 4] [textBuf 20] [modeBuf 10])
+	(method (show)
 		(switch msgType
 			(TEXT_MSG
-				(self loop: lSpeechMode)
-				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_TEXT_MODE 1 @modeBuf)
+				(DrawCel vGameControls lCurrentMode 0 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 			(CD_MSG
-				(self loop: lDualMode)
-				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_SPEECH_MODE 1 @modeBuf)
+				(DrawCel vGameControls lCurrentMode 1 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 			((| TEXT_MSG CD_MSG)
-				(self loop: lTextMode)
-				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_DUAL_MODE 1 @modeBuf)
+				(DrawCel vGameControls lCurrentMode 2 MSG_BUTTON_X MSG_BUTTON_Y -1)
 			)
 		)
-		(Graph GFillRect 114 73 121 164 colBlack)
-		(Graph GShowBits 114 73 121 164 1)
+		(Graph GShowBits MSG_BUTTON_Y MSG_BUTTON_X
+			(+ MSG_BUTTON_Y (CelHigh vGameControls lCurrentMode))
+			(+ MSG_BUTTON_X (CelWide vGameControls lCurrentMode))
+			1
+		)
 		(super show: &rest)
-		(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_CURRENT_MODE 1 @textBuf)
-		(Format @str @textBuf @modeBuf)
-		(TextSize @rect @str 999 0)
-		(Display @str
-			p_font 999
-			p_color colGray5
-			p_at
-			(+
-				10
-				(CelWide vGameControls lControlFixtures 2)
-				(/
-					(-
-						(-
-							(+ 151 (CelWide vGameControls lSliderText 1))
-							(+ 10 (CelWide vGameControls lControlFixtures 2) 6)
-						)
-						[rect 3]
-					)
-					2
-				)
-			)
-			(+ 49 (CelHigh vGameControls lSliderText 1) 3)
-		)
 	)
 )
 
