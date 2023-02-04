@@ -66,8 +66,9 @@
 		lAboutButton
 		lHelpButton
 		lOKButton
-		lModeButton
-		lCurrentMode
+		lTextMode
+		lSpeechMode
+		lDualMode
 	)
 	
 	;

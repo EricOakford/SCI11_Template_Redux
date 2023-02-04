@@ -99,16 +99,21 @@
 (define SLIDDIST 40)
 (define BUTTON_TOP 42)
 (define BUTTON_LEFT 80)
+(define BUTTON_DIST	20)
+(define SCORE_TOP	13)
 
-(define MSG_BUTTON_X 162)
-(define MSG_BUTTON_Y 160)
+;for talkie games, these are for the display mode rectangle
+(define MSGMODE_TOP 155)
+(define MSGMODE_LEFT 140)
+(define MSGMODE_BOTTOM 170)
+(define MSGMODE_RIGHT 240)
 
 (instance gcWin of BorderWindow
 	(method (open &tmp
 			savePort theBevelWid t l r b theColor theMaps
 			bottomColor topColor leftColor rightColor thePri i
-			theCel
-			[str 15] [rectPt 4]
+			theCel scoreHeight
+			[str 15] [scoreBuf 15] [rectPt 4]
 		)
 		(= thePri -1)
 		;if iconTextSwitch isn't commented out, let's assume it's
@@ -168,8 +173,13 @@
 
 		;Now draw the window below the sliders for score
 		(Graph GShowBits 12 1 15 (+ 151 (CelWide vGameControls lSliderText 1)) 1)
-		
-				(= b (+ (= t (+ 46 (CelHigh vGameControls lSliderText 1))) 13))
+		;The window will be sized accordingly whether this is a talkie game or not
+		(if (gameControls contains: iconTextSwitch)
+			(= scoreHeight (* SCORE_TOP 2))
+		else
+			(= scoreHeight SCORE_TOP)
+		)
+		(= b (+ (= t (+ 46 (CelHigh vGameControls lSliderText 1))) scoreHeight))
 		(= r
 			(+
 				(= l (+ 10 (CelWide vGameControls lControlFixtures 1)))
@@ -202,7 +212,8 @@
 		(Graph GShowBits t l (+ b 1) (+ r 1) 1)
 		
 		;print the score centered in its window
-		(Format @str "Score: %d of %d" score possibleScore)
+		(Message MsgGet GAME_CONTROLS N_SCORE NULL NULL 1 @scoreBuf)
+		(Format @str @scoreBuf score possibleScore)
 		(TextSize @rectPt @str 999 0)
 		(Display @str
 			p_font 999
@@ -272,8 +283,10 @@
 	
 	(method (show)
 		(if (not (user controls?))
+			(= sliderCel 6)
 			(= signal (| FIXED_POSN DISABLED))
 		else
+			(= sliderCel 0)
 			(= signal FIXED_POSN)
 		)
 		(super show: &rest)
@@ -308,7 +321,7 @@
 		loop lRestoreButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 20)
+		nsTop (+ BUTTON_TOP BUTTON_DIST)
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTORE
 		helpVerb V_HELP
@@ -321,7 +334,7 @@
 		loop lRestartButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 40)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 2))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_RESTART
 		helpVerb V_HELP
@@ -334,7 +347,7 @@
 		loop lQuitButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 60)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 3))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_QUIT
 		helpVerb V_HELP
@@ -347,7 +360,7 @@
 		loop lAboutButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 80)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 4))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_ABOUT
 		helpVerb V_HELP
@@ -360,7 +373,7 @@
 		loop lHelpButton
 		cel 0
 		nsLeft (+ BUTTON_LEFT 26)
-		nsTop (+ BUTTON_TOP 80)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 4))
 		message V_HELP
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_HELP
@@ -374,7 +387,7 @@
 		loop lOKButton
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 100)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 5))
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE HIDEBAR)
 		noun N_OK
 		helpVerb V_HELP
@@ -384,10 +397,10 @@
 (instance iconTextSwitch of IconItem
 	(properties
 		view vGameControls
-		loop lModeButton
+		loop lTextMode
 		cel 0
 		nsLeft BUTTON_LEFT
-		nsTop (+ BUTTON_TOP 120)
+		nsTop (+ BUTTON_TOP (* BUTTON_DIST 6))
 		cursor ARROW_CURSOR
 		signal (| VICON FIXED_POSN RELVERIFY IMMEDIATE)
 		noun N_MSGMODE
@@ -411,24 +424,50 @@
 		(self show:)
 	)
 	
-	(method (show)
+	(method (show &tmp [str 25] [rect 4] [textBuf 20] [modeBuf 10])
 		(switch msgType
 			(TEXT_MSG
-				(DrawCel vGameControls lCurrentMode 0 MSG_BUTTON_X MSG_BUTTON_Y -1)
+				(self loop: lSpeechMode)
+				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_TEXT_MODE 1 @modeBuf)
 			)
 			(CD_MSG
-				(DrawCel vGameControls lCurrentMode 1 MSG_BUTTON_X MSG_BUTTON_Y -1)
+				(self loop: lDualMode)
+				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_SPEECH_MODE 1 @modeBuf)
 			)
 			((| TEXT_MSG CD_MSG)
-				(DrawCel vGameControls lCurrentMode 2 MSG_BUTTON_X MSG_BUTTON_Y -1)
+				(self loop: lTextMode)
+				(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_DUAL_MODE 1 @modeBuf)
 			)
 		)
-		(Graph GShowBits MSG_BUTTON_Y MSG_BUTTON_X
-			(+ MSG_BUTTON_Y (CelHigh vGameControls lCurrentMode))
-			(+ MSG_BUTTON_X (CelWide vGameControls lCurrentMode))
-			1
-		)
+		
+		;Now draw the rectangle for the display mode below the score
+		(Graph GFillRect MSGMODE_TOP MSGMODE_LEFT MSGMODE_BOTTOM MSGMODE_RIGHT colBlack)
+		(Graph GShowBits MSGMODE_TOP MSGMODE_LEFT MSGMODE_BOTTOM MSGMODE_RIGHT VMAP)
 		(super show: &rest)
+		(Message MsgGet GAME_CONTROLS N_MSGMODE NULL C_CURRENT_MODE 1 @textBuf)
+		(Format @str @textBuf @modeBuf)
+		(TextSize @rect @str 999 0)
+		(Display @str
+			p_font 999
+			p_color colGray4
+			p_at
+			(+
+				82
+				(CelWide 947 1 1)
+				(/
+					(-
+						(-
+							(+ 151 (CelWide 947 0 1))
+							(+ 10 (CelWide 947 1 1) 6)
+						)
+						[rect 3]
+					)
+					2
+				)
+			)
+			(+ 92 (CelHigh 947 0 1) 3)
+		)
+
 	)
 )
 

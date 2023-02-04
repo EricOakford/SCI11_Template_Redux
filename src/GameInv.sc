@@ -29,6 +29,7 @@
 (use IconBar)
 (use Print)
 (use BordWind)
+(use Window)
 (use Invent)
 (use System)
 
@@ -90,6 +91,7 @@
 
 (instance invWin of InsetWindow
 	(properties
+		priority -1
 		topBordHgt 28
 		botBordHgt 5
 	)
@@ -153,43 +155,34 @@
 	)
 
 	(method (doVerb theVerb &tmp port icon)
+		(= port (GetPort))
 		(if (not modNum) (= modNum curRoomNum))
 		(switch theVerb
 			(V_LOOK
 				(if (Message MsgSize modNum noun V_LOOK NULL 1)
 					(= icon (CelWide view loop cel))
-					(= port (GetPort))
 					(Print
 						addIcon: view loop cel 0 0
 						addText: noun V_LOOK NULL 1 (+ icon 4) 0 modNum
 						init:
 					)
-					(SetPort port)
-				)
-			)
-			(V_DO
-				(if (Message MsgSize modNum noun V_DO NULL 1)
-					(= port (GetPort))
-					(Print addText: noun V_DO NULL NULL 0 0 modNum init:)
-					(SetPort port)
-				else
-					(= port (GetPort))
-					(Print addText: NULL V_DO NULL 0 0 0 modNum init:)
-					(SetPort port)
 				)
 			)
 			(else 
 				(if (Message MsgSize modNum noun theVerb NULL 1)
-					(= port (GetPort))
-					(Print addText: noun theVerb NULL 0 0 0 modNum init:)
-					(SetPort port)
+					(Print
+						addText: noun theVerb NULL 0 0 0 modNum
+						init:
+					)
 				else
-					(= port (GetPort))
-					(Print addText: NULL V_COMBINE NULL 0 0 0 modNum init:)
-					(SetPort port)
+					(Print
+						addText: NULL V_COMBINE NULL 0 0 0 modNum
+						init:
+					)
 				)
 			)
 		)
+		(SetPort port)
 	)	
 )
 
