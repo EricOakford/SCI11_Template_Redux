@@ -23,6 +23,8 @@
 (use IconBar)
 (use Feature)
 (use Flags)
+(use GameWindow)
+(use BordWind)
 (use Window)
 (use Sound)
 (use Game)
@@ -213,7 +215,9 @@
 		(= systemWindow SysWindow)
 		(= version {x.yyy})
 		(super init: &rest)
-		
+	
+		;set the custom window here, not in GameInit!	
+		(= systemWindow BorderWindow)
 		;initialize the colors first
 		((ScriptID COLOR_INIT 0) doit:)
 		

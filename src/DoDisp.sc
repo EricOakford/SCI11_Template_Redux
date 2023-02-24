@@ -23,6 +23,7 @@
 		back			-1
 		width			300
 		font			NULL
+		mode			teJustLeft
 	)
 
 	(method (posn theX theY)
@@ -45,6 +46,7 @@
 					p_font	font
 					p_width	width
 					p_color back
+					p_mode mode
 					p_save
 				)
 			)
@@ -55,6 +57,7 @@
 				p_font	font
 				p_width	width
 				p_color front
+				p_mode mode
 				p_save
 			)
 		)

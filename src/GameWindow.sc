@@ -10,11 +10,10 @@
 (script#	GAME_WINDOW)
 (include game.sh)
 (use Main)
-(use BordWind)
 (use Window)
 
 
-(class GameWindow kindof BorderWindow	
+(class GameWindow kindof Window	
 	(method (open)
 		;Customize the window here
 		(super open:	&rest)

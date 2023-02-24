@@ -10,7 +10,6 @@
 (include game.sh) (include "0.shm")
 (use Main)
 (use Talker)
-(use BordWind)
 (use System)
 
 (local
@@ -39,7 +38,6 @@
 		; Render messages with the |f3| tag in font 1307.		
 		(TextFonts SYSFONT userFont smallFont 1307)
 		
-		(= systemWindow BorderWindow)
 		(theGame
 			setCursor: theCursor TRUE 304 172
 		)
