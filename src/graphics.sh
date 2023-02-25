@@ -48,8 +48,8 @@
 		lInvLook
 		lInvOK
 		lInvSelect
-		lInvMore
-		lInvMoreDisabled
+		lInvUp
+		lInvDown
 	)
 
 (define vGameControls			947)

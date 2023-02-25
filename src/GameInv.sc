@@ -28,6 +28,8 @@
 (use Procs)
 (use IconBar)
 (use Print)
+(use ScrollableInventory)
+(use ScrollInset)
 (use BordWind)
 (use Window)
 (use Invent)
@@ -36,17 +38,9 @@
 (public
 	GameInv 0
 	invWin 1
-	resetInv 2
 )
 
-(local
-	theItem
-	theOwner
-)
-
-(define ITEMS_PER_PAGE 10)
-
-(instance GameInv of Inventory
+(instance GameInv of ScrollableInventory
 	;This is the game-specific inventory	
 	(method (init)
 		((= inventory self)
@@ -58,63 +52,45 @@
 			add:
 				(invLook cursor: lookCursor yourself:)
 				(invHand cursor: doCursor yourself:)
-				invSelect
-				invMore
+				(invSelect cursor: normalCursor yourself:)
+				invUp
+				invDown
 				invHelp
 				ok
+		)
+		(self
+			state: NOCLICKHELP
+			upIcon: invUp
+			downIcon: invDown
+			window: invWin
+			helpIconItem: invHelp
+			selectIcon: invSelect
+			okButton: ok
+			numCols: 5
+			scrollAmount: 5
+			dispAmount: 10
+			empty: N_EMPTY
+			normalHeading: GAME_INV
+			eachElementDo: #highlightColor 0
 			eachElementDo: #modNum GAME_INV
 			eachElementDo: #init
-			state: NOCLICKHELP
-			window:	invWin
-			helpIconItem:	invHelp
-			selectIcon:	invSelect
-			okButton:	ok
-		)
-		(ego get: iMoney)
-		;set up the inventory window
-		(invWin
-			color: 0
-			back: colGray2
-			topBordColor: colGray4
-			lftBordColor: colGray3
-			rgtBordColor: colGray1
-			botBordColor: colBlack
-			insideColor: colGray1
-			topBordColor2: colBlack
-			lftBordColor2: colBlack
-			botBordColor2: colGray4
-			rgtBordColor2: colGray5
 		)
 	)
-
 )
 
-(instance invWin of InsetWindow
+(instance invWin of ScrollInsetWindow
 	(properties
 		priority -1
 		topBordHgt 28
 		botBordHgt 5
 	)
 	
-	(method (open &tmp theX node obj)
-		(= theX 0)
-		(= node (inventory first:))
-		(while node
-			(if
-				(not
-					((= obj (NodeValue node)) isKindOf: InvItem)
-				)
-				(= theX
-					(+
-						theX
-						(CelWide (obj view?) (obj loop?) (obj cel?))
-					)
-				)
-			)
-			(= node (inventory next: node))
+	(method (open)
+		(invLook
+			nsLeft: (- (/ (- (self right?) (self left?)) 2) 100)
 		)
-		(super open:)
-		(invLook nsLeft: (/ (- (- right left) theX) 2))
+		(invLook nsTop: 2)
+		(super open: &rest)
 	)
 )
 
@@ -125,7 +101,6 @@
 		cursorView 0
 		cursorLoop 0
 		cursorCel 0
-		realOwner 0
 	)
 	
 	(method (select)
@@ -143,15 +118,6 @@
 		(= cursorLoop theLoop)
 		(= cursorCel theCel)
 		(= cursor invCursor)
-	)
-
-	(method (ownedBy who)
-		(return
-			(if (== owner who)
-			else
-				(== realOwner who)
-			)
-		)
 	)
 
 	(method (doVerb theVerb &tmp port icon)
@@ -184,33 +150,6 @@
 		)
 		(SetPort port)
 	)	
-)
-
-(instance resetInv of Code	
-	(method (doit who &tmp i what pageNum numItems)
-		(= numItems 0)
-		(= theOwner who)
-		(= pageNum 0)
-		(for ((= i 0)) (< i iLastInvItem) ((++ i))
-			(if
-				(or
-					(== ((= what (inventory at: i)) owner?) theOwner)
-					(== (what realOwner?) theOwner)
-				)
-				(++ numItems)
-				(what realOwner: theOwner owner: 0)
-				(if (<= (++ pageNum) ITEMS_PER_PAGE)
-					(what owner: theOwner)
-					(= theItem i)
-				)
-			)
-		)
-		(if (<= numItems ITEMS_PER_PAGE)
-			(invMore loop: lInvMoreDisabled)
-		else
-			(invMore loop: lInvMore)
-		)
-	)
 )
 
 (class GameIconItem of IconItem
@@ -259,6 +198,51 @@
 	)
 )
 
+(instance invUp of GameIconItem
+	(properties
+		view vInvIcons
+		loop lInvUp
+		cel 0
+		cursor ARROW_CURSOR
+		maskView vInvIcons
+		maskLoop lInvUp
+		maskCel 2
+		lowlightColor 5
+		noun N_SCROLL_UP
+		helpVerb V_HELP
+	)
+	
+	(method (select)
+		(if (super select: &rest)
+			(inventory scroll: -1)
+		)
+		(return FALSE)
+	)
+)
+
+(instance invDown of GameIconItem
+	(properties
+		view vInvIcons
+		loop lInvDown
+		cel 0
+		cursor ARROW_CURSOR
+		maskView vInvIcons
+		maskLoop lInvDown
+		maskCel 2
+		lowlightColor 5
+		noun N_SCROLL_DOWN
+		helpVerb V_HELP
+	)
+	
+	(method (select)
+		(if (super select: &rest)
+			(inventory scroll: 1)
+		)
+		(return FALSE)
+	)
+)
+
+
 (instance invHelp of GameIconItem
 	(properties
 		view vInvIcons
@@ -288,53 +272,6 @@
 	(method (init)
 		(= cursor normalCursor)
 		(super init:)
-	)
-)
-
-(instance invMore of GameIconItem
-	(properties
-		view vInvIcons
-		loop lInvMore
-		cel 0
-		cursor ARROW_CURSOR
-		signal (| RELVERIFY IMMEDIATE)
-		noun N_MORE
-		helpVerb V_HELP
-	)
-	
-	(method (select &tmp i what obj pageNum)
-		(return
-			(if (and (super select: &rest) (== loop lInvMore))
-				(for ((= i 0)) (<= i theItem) ((++ i))
-					(if (== ((= obj (inventory at: i)) owner?) theOwner)
-						(obj realOwner: theOwner owner: 0)
-					)
-				)
-				(= pageNum 0)
-				(= what theItem)
-				(while (< i iLastInvItem)
-					(if
-						(and
-							(==
-								((= obj (inventory at: i)) realOwner?)
-								theOwner
-							)
-							(<= (++ pageNum) ITEMS_PER_PAGE)
-						)
-						(obj owner: theOwner)
-						(= theItem i)
-					)
-					(++ i)
-				)
-				(if (== what theItem)
-					(resetInv doit: theOwner)
-				)
-				(inventory hide: highlightedIcon: 0 show: theOwner)
-				(return FALSE)
-			else
-				FALSE
-			)
-		)
 	)
 )
 
