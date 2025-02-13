@@ -39,8 +39,10 @@
 		lIconControls
 		lIconScore
 		lIconHelp
+		lIconCustom
 		lIconDisabled
-	)	
+	)
+
 (define vInvIcons 901)
 	(enum
 		lInvHand
@@ -73,4 +75,5 @@
 	
 	;
 ; Picture defines
-(define pTestRoom 110)
+(define pWhite 98)
+(define pBlack 99)

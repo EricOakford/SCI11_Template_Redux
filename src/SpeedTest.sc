@@ -26,7 +26,7 @@
 
 (instance speedRoom of Room
 	(properties
-		picture vSpeedTest
+		picture pBlack
 	)
 	
 	(method (init)

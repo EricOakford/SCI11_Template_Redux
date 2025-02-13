@@ -17,12 +17,12 @@
 (use System)
 
 (public
-	gcCode 0
+	theGameControls 0
 	gcWin 1
 )
 
-(instance gcCode of Code
-	(method (doit)
+(instance theGameControls of GameControls
+	(method (init)
 		(gcWin
 			color: colBlack
 			back: colGray4
@@ -31,7 +31,7 @@
 			rgtBordColor: colGray3
 			botBordColor: colGray2
 		)
-		((= gameControls GameControls)
+		((= gameControls self)
 			window: gcWin
 			add:
 				iconOk

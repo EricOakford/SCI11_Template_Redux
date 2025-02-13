@@ -16,7 +16,7 @@
 
 (instance testRoom of Room
 	(properties
-		picture scriptNumber
+		picture pWhite
 		style FADEOUT
 		horizon 50
 		vanishingX 130
@@ -35,15 +35,7 @@
 		;set up polygons
 		;room poly
 		(curRoom addObstacle:
-			((Polygon new:)
-				type: PContainedAccess
-				init:
-					319 189
-					319 50
-					0 50
-					0 189
-				yourself:
-			)
+			(&getpoly {Room})
 		)
 		(ego init: normalize:)
 		; We just came from the title screen, so we need to call this to give control

@@ -43,7 +43,7 @@
 
 (instance deathRoom of Room
 	(properties
-		picture vSpeedTest
+		picture pBlack
 		style FADEOUT
 	)
 	
@@ -58,12 +58,9 @@
 )
 
 (instance deathScript of Script
-	
 	(method (changeState newState &tmp case)
-		(= state newState)
-		(switch state
+		(switch (= state newState)
 			(waitABit
-				(ego hide:)
 				(= cycles 2)
 			)
 			(setItUp
@@ -96,12 +93,12 @@
 					)
 				)
 				(deathMusic number: sDeath play:)
-				(= cycles 2)
+				(= ticks 20)
 			)
 			(showMessage
 				(repeat
 					(switch
-						(Print
+						(deathPrint
 							;print the title
 							font: SYSFONT
 							addText: N_DEATH NULL case 2
@@ -137,3 +134,5 @@
 		flags mNOPAUSE
 	)
 )
+
+(instance deathPrint of Print)

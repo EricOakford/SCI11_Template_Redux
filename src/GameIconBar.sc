@@ -16,12 +16,12 @@
 (use System)
 
 (public
-	iconCode 0
+	GameIconBar 0
 )
 
-(instance iconCode of Code
-	(method (doit)
-		((= theIconBar IconBar)
+(instance GameIconBar of IconBar
+	(method (init)
+		((= theIconBar self)
 			add:
 			;These correspond to ICON_*** in game.sh
 				(iconWalk cursor: walkCursor yourself:)

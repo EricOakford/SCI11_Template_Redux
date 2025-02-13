@@ -2,10 +2,10 @@
 ;;; 9.shm -- Produced by SCI Companion
 ;;; This file should only be edited with the SCI Companion message editor
 
+;;; CASES
+
+
 ;;; NOUNS
 
 (define N_ABOUT 1)
-
-;;; CASES
-
 

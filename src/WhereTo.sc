@@ -19,7 +19,7 @@
 
 (instance whereTo of Room
 	(properties
-		picture vSpeedTest
+		picture pBlack
 	)
 	
 	(method (init &tmp [str 10] nextRoom)

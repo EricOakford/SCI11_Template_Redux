@@ -167,7 +167,7 @@
 	debugging				;debug mode enabled
 	isHandsOff				;ego can't be controlled
 	egoLooper				;pointer for ego's stopGroop
-	deathReason
+	deathReason				;message to display when calling EgoDead
 	theCurIcon
 	iconSettings
 )
@@ -262,8 +262,8 @@
 		(user alterEgo:  ego)
 
 		;initialize icon bar, control panel, and inventory
-		((ScriptID GAME_ICONBAR 0) doit:)
-		((ScriptID GAME_CONTROLS 0) doit:)
+		((ScriptID GAME_ICONBAR 0) init:)
+		((ScriptID GAME_CONTROLS 0) init:)
 		((ScriptID GAME_INV 0) init:)
 		
 		;initialize everything else
@@ -324,6 +324,12 @@
 						(SHIFTTAB
 							(if (not (& ((theIconBar at: ICON_INVENTORY) signal?) DISABLED))
 								(ego showInv:)
+							)
+						)
+						(`^c
+							(if (not (& ((theIconBar at: ICON_CONTROL) signal?) DISABLED))
+								(theGame showControls:)
+								(event claimed: TRUE)
 							)
 						)
 						(`#2
@@ -537,8 +543,8 @@
 )
 
 (instance gameHandsOn of Code
+	;Ensable ego control
 	(method (doit)
-		;Enable ego control
 		(= isHandsOff FALSE)
 		(User
 			canControl: TRUE
