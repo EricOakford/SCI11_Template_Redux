@@ -40,6 +40,7 @@
 			helpIconItem: iconHelp
 			walkIconItem: iconWalk
 			state: (| OPENIFONME NOCLICKHELP)
+			disable:	;gotta disable it at first!
 		)
 		(iconInventory message: (if (HaveMouse) TAB else SHIFTTAB))
 	)

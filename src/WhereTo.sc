@@ -37,6 +37,7 @@
 		(if str
 			(= nextRoom (ReadNumber @str))
 		)
+		(theIconBar enable:)
 		(self newRoom: nextRoom)
 	)
 )

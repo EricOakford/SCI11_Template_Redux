@@ -2,17 +2,17 @@
 ;;; 0.shm -- Produced by SCI Companion
 ;;; This file should only be edited with the SCI Companion message editor
 
+;;; CASES
+
+
 ;;; NOUNS
 
 (define N_STATUSLINE 3)
 (define N_QUITGAME 1)
 (define N_PRAGFAIL 4)
 (define N_RESTART 5)
-(define N_YESORNO 2)
 (define N_VERB_GENERIC 6)
 (define N_QUIT_STR 7)
 (define N_MEM_FRAGMENTED 8)
-
-;;; CASES
-
+(define N_YESORNO 2)
 

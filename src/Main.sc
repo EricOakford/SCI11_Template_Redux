@@ -416,21 +416,57 @@
 		(DisposeScript GAME_ABOUT)
 	)
 	
-	(method (restart)
+	(method (restart &tmp oldCur)
 		;if a parameter is given, skip the dialog and restart immediately
 		(if argc
 			(super restart:)
 		else
-			;the game's restart dialog
-			(if (YesNoDialog N_RESTART)
+			;the game's restart dialog (can't use YesNoDialog proc here)
+			(if modelessDialog
+				(modelessDialog dispose:)
+			)
+			(= oldCur (self setCursor: normalCursor TRUE))
+			(if
+				(Print
+					font:		userFont
+					width:		100
+					mode:		teJustCenter
+					addText:	N_RESTART NULL NULL 1 0 0 MAIN
+					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
+					addButton:	FALSE N_YESORNO NULL NULL 2 70 25 MAIN
+					init:
+				)
 				(super restart:)
+			else
+				(self setCursor: oldCur TRUE)
 			)
 		)
 	)
 
-	(method (quitGame)
-		(if (YesNoDialog N_QUITGAME)
+	(method (quitGame &tmp oldCur)
+		;if a parameter is given, skip the dialog and quit immediately
+		(if argc
 			(super quitGame:)
+		else
+			;the game's quit dialog (can't use YesNoDialog proc here)
+			(if modelessDialog
+				(modelessDialog dispose:)
+			)
+			(= oldCur (self setCursor: normalCursor TRUE))
+			(if
+				(Print
+					font:		userFont
+					width:		100
+					mode:		teJustCenter
+					addText:	N_QUITGAME NULL NULL 1 0 0 MAIN
+					addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
+					addButton:	FALSE N_YESORNO NULL NULL 2 70 25 MAIN
+					init:
+				)
+				(super quitGame:)
+			else
+				(self setCursor: oldCur TRUE)
+			)
 		)
 	)
 

@@ -64,21 +64,27 @@
 	(curRoom newRoom: DEATH)
 )
 
-(procedure (YesNoDialog question &tmp oldCur)
+(procedure (YesNoDialog question msgFile &tmp oldCur modNum)
 	;this brings up a "yes or no" dialog choice.
-	(= oldCur ((theIconBar curIcon?) cursor?))
-	(theGame setCursor: normalCursor)
 	(if modelessDialog
 		(modelessDialog dispose:)
+	)
+	(= oldCur (theGame setCursor: normalCursor TRUE))
+	;if a message resource is specified, use it.
+	(if msgFile
+		(= modNum msgFile)
+	;otherwise, assume the room number.
+	else
+		(= modNum curRoomNum)
 	)
 	(return
 		(Print
 			font:		userFont
-			width:		100
+			width:		160
 			mode:		teJustCenter
-			addText:	question NULL NULL 1 0 0 MAIN
+			addText:	question NULL NULL 1 0 0 modNum
 			addButton:	TRUE N_YESORNO NULL NULL 1 0 25 MAIN
-			addButton:	FALSE N_YESORNO NULL NULL 2 75 25 MAIN
+			addButton:	FALSE N_YESORNO NULL NULL 2 125 25 MAIN
 			init:
 		)
 	)

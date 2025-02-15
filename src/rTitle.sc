@@ -56,6 +56,7 @@
 							init:
 						)
 						(buttonStart
+							(theIconBar enable:)
 							(curRoom newRoom: rTestRoom)
 							(break)
 						)
@@ -63,7 +64,7 @@
 							(theGame restore:)
 						)
 						(buttonQuit
-							(= quit TRUE)
+							(theGame quitGame: TRUE)
 							(break)
 						)
 					)

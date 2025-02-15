@@ -2,10 +2,6 @@
 ;;; 10.shm -- Produced by SCI Companion
 ;;; This file should only be edited with the SCI Companion message editor
 
-;;; NOUNS
-
-(define N_DEATH 1)
-
 ;;; CASES
 
 (define C_GENERIC 1)
@@ -13,4 +9,8 @@
 (define C_TRY_AGAIN 3)
 (define C_RESTART 4)
 (define C_QUIT 5)
+
+;;; NOUNS
+
+(define N_DEATH 1)
 
