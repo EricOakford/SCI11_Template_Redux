@@ -30,6 +30,8 @@
 (define DISPOSE			14)
 (define PROCS			15)
 (define COLOR_INIT		16)
+(define SCROLLINV		17)
+(define SCROLLINSET		18)
 
 ;
 ; Actual rooms

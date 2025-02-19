@@ -210,16 +210,12 @@
 		Narrator
 		Polygon
 		PolyPath
+		(ScriptID SIGHT)
 		
 		;load up the standard game system
 		(= systemWindow SysWindow)
 		(= version {x.yyy})
 		(super init: &rest)
-	
-		;set the custom window here, not in GameInit!	
-		(= systemWindow BorderWindow)
-		;initialize the colors first
-		((ScriptID COLOR_INIT 0) doit:)
 		
 		;set up the global sounds
 		((= theMusic longSong)
@@ -261,7 +257,11 @@
 		(= egoLooper (ScriptID GAME_EGO 1))
 		(user alterEgo:  ego)
 
-		;initialize icon bar, control panel, and inventory
+		;set the custom window here, not in GameInit!	
+		(= systemWindow BorderWindow)
+		
+		;initialize the colors, icon bar, control panel, and inventory
+		((ScriptID COLOR_INIT 0) doit:)
 		((ScriptID GAME_ICONBAR 0) init:)
 		((ScriptID GAME_CONTROLS 0) init:)
 		((ScriptID GAME_INV 0) init:)
