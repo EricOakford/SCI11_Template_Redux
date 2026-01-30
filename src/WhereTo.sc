@@ -30,6 +30,7 @@
 			(Print
 				addText: N_ROOM NULL C_WHERETO 1 0 0 SPEED_TEST
 				addEdit: @str 5 115 0
+				addButton: rTitle N_ROOM NULL C_CONTINUE 1 0 20 SPEED_TEST
 				init:
 			)
 		)

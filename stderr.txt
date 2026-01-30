@@ -1,77 +1,78 @@
-[1;0m[1;2m2025-02-19 15:55:36.722 | [1;0mSDL: version 2.30.3 initialised (windows video and wasapi audio)[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.723 | [1;0mDISPLAY: Using 854x640 window size in windowed mode on display-0[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.880 | [1;0mOPENGL: Vendor: Intel[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.881 | [1;0mOPENGL: Version: 4.6.0 - Build 32.0.101.5972[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.881 | [1;0mOPENGL: GLSL version: 4.60 - Build 32.0.101.5972[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.881 | [1;0mOPENGL: NPOT textures supported[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.881 | [1;0mRENDER: Using adaptive CRT shader based on the graphics standard of the video mode[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.895 | [1;0mRENDER: Auto-switched to shader 'crt/hercules'[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.895 | [1;0mVGA: Pixel doubling enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.896 | [1;0mVIDEO: Using the DOS video mode's frame rate[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.904 | [1;0mMEMORY: Using 4096 DOS memory pages (16 MB) at address: 0000021C5CADC060[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.904 | [1;0mVIDEO: Initialised S3 Trio64 VESA 2.0 compatible with 4 MB of FP DRAM supporting 92 modes[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.907 | [1;0mVGA: Double scanning VGA video modes enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.912 | [1;0mVOODOO: Initialized with 4 MB of RAM, 4 threads, and no bilinear filtering[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.913 | [1;0mCAPTURE: Image capturer started[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.934 | [1;0mMIXER: Initialised stereo 48000 Hz audio with 1024 sample frame buffer[1;0m
-[1;0m[1;2m2025-02-19 15:55:36.934 | [1;0mMIXER: Master compressor enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.037 | [1;0mMIDI: Opened device: win32[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.038 | [1;0mMPU-401: Running in intelligent mode on ports 330h and 331h[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.038 | [1;0mOPL: Operating at 49716 Hz and downsampling to the output rate[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.039 | [1;0mOPL: Running OPL3 on ports 220h and 388h[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.039 | [1;0mOPL: Sound Blaster 16 OPL output filter enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.039 | [1;0mDMA: Initialised primary controller[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.039 | [1;0mDMA: Initialised secondary controller[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.040 | [1;0mSB: Operating at 22050 Hz and upsampling to the output rate[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.040 | [1;0mSB16: Modern DAC output filter enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.040 | [1;0mSB16: Setting 'BLASTER' environment variable to 'A220 I7 D1 H5 T6'[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.040 | [1;0mSB16: Running on port 220h, IRQ 7, DMA 1, and high DMA 5[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.043 | [1;0mPCSPEAKER: Operating at 32000 Hz and upsampling to the output rate[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.043 | [1;0mPCSPEAKER: Initialised impulse model[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.044 | [1;0mPCSPEAKER: High-pass filter enabled (18 dB/oct at 120 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.044 | [1;0mPCSPEAKER: Low-pass filter enabled (18 dB/oct at 4300 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.044 | [1;0mDISNEY: Operating at 48000 Hz without resampling[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.045 | [1;0mDISNEY: High-pass filter enabled (12 dB/oct at 100 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.045 | [1;0mDISNEY: Low-pass filter enabled (12 dB/oct at 2000 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.045 | [1;0mLPT_DAC: Initialised Disney Sound Source on LPT port 378h[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.046 | [1;0mPS1DAC: Operating at 48000 Hz without resampling[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.046 | [1;0mPS1DAC: High-pass filter enabled (18 dB/oct at 160 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.046 | [1;0mPS1DAC: Low-pass filter enabled (6 dB/oct at 2100 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.047 | [1;0mPS1: Operating at 250000 Hz and downsampling to the output rate[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.047 | [1;0mPS1: High-pass filter enabled (18 dB/oct at 160 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.047 | [1;0mPS1: Low-pass filter enabled (6 dB/oct at 2100 Hz)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.047 | [1;0mPS1: Initialised IBM PS/1 Audio card[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.048 | [1;0mMOUSE: Will be captured after the first left or right button click[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.048 | [1;0mMOUSE: Middle button will capture/release the mouse (clicks not sent to the game/program)[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.048 | [1;0mMOUSE (PS/2): Standard, 3 buttons[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.061 | [1;0mDOS: Loaded modern locale for country 1, 'United States'[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.062 | [1;0mSLIRP: Slirp version: 4.8.0[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.063 | [1;0mSLIRP: Successfully initialized[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.063 | [1;0mNE2000: Initialised on port 300h and IRQ 3[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.065 | [1;0mCONFIG: Loaded auto-mounted drive config file 'C:\Program Files\DOSBox\resources\drives\y.conf'[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.065 | [1;0mAUTOEXEC: Using autoexec from one or more joined sections[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.081 | [1;0mMAPPER: No joysticks found[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.082 | [1;0mMAPPER: Loaded default key bindings[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.098 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p'[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.098 | [1;0mSDL: Using standard SDI (auto) display refresh rate of 60 Hz[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.108 | [1;0mDISPLAY: VGA 720x400 16-colour text mode 03h at 70.087 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.35 (20:27) pixel aspect ratio[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.108 | [1;0mOPENGL: Enabled non-adaptive vsync[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.110 | [1;0mMOUNT: Path 'C:\Program Files\DOSBox\resources\drives\y' found[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.112 | [1;0mMOUNT: Path '.' found[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.196 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p-fake-double-scan'[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.197 | [1;0mVGA: Forcing single scanning of double-scanned VGA video modes[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.202 | [1;0mDISPLAY: VGA 320x200 256-colour graphics mode 13h at 70.086 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.2 (5:6) pixel aspect ratio[1;0m
-[1;0m[1;2m2025-02-19 15:55:37.284 | [1;0mSB16: Resetting DSP[1;0m
-[1;0m[1;2m2025-02-19 15:55:50.131 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p'[1;0m
-[1;0m[1;2m2025-02-19 15:55:50.131 | [1;0mVGA: Double scanning VGA video modes enabled[1;0m
-[1;0m[1;2m2025-02-19 15:55:50.135 | [1;0mDISPLAY: VGA 720x400 16-colour text mode 03h at 70.087 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.35 (20:27) pixel aspect ratio[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.223 | [1;0mPS1: Shutting down IBM PS/1 Audio card[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.224 | [1;0mDISNEY: Shutting down DAC[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.224 | [1;0mPCSPEAKER: Shutting down impulse model[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.224 | [1;0mOPL: Shutting down OPL3[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.224 | [1;0mSB16: Shutting down[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.224 | [1;0mMPU-401: Shutting down[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.380 | [1;0mCAPTURE: Image capturer shutting down[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.380 | [1;0mDMA: Shutting down primary controller[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.381 | [1;0mDMA: Shutting down secondary controller[1;0m
-[1;0m[1;2m2025-02-19 15:55:51.403 | [1;0matexit[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.093 | [1;0mSDL: version 2.30.8 initialised (windows video and wasapi audio)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.094 | [1;0mDISPLAY: Using 854x640 window size in windowed mode on display-0[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.286 | [1;0mOPENGL: Vendor: Intel[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.286 | [1;0mOPENGL: Version: 4.6.0 - Build 32.0.101.7082[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.286 | [1;0mOPENGL: GLSL version: 4.60 - Build 32.0.101.7082[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.286 | [1;0mOPENGL: NPOT textures supported[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.287 | [1;0mRENDER: Using adaptive CRT shader based on the graphics standard of the video mode[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.298 | [1;0mRENDER: Auto-switched to shader 'crt/hercules'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.298 | [1;0mVGA: Pixel doubling enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.299 | [1;0mVIDEO: Using the DOS video mode's frame rate[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.305 | [1;0mMEMORY: Using 4096 DOS memory pages (16 MB) at address: 000002466CCCF060[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.305 | [1;0mVIDEO: Initialised S3 Trio64 VESA 2.0 compatible with 4 MB of FP DRAM supporting 89 modes[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.309 | [1;0mVGA: Double scanning VGA video modes enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.311 | [1;0mVOODOO: Initialized with 4 MB of RAM, 8 threads, and no bilinear filtering[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.312 | [1;0mCAPTURE: Image capturer started[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.699 | [1;0mMIXER: Initialised stereo 48000 Hz audio with 1024 sample frame buffer[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.700 | [1;0mMIXER: Master compressor enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.793 | [1;0mMIDI: Opened device: win32[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.795 | [1;0mMPU-401: Running in intelligent mode on ports 330h and 331h[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.795 | [1;0mOPL: Operating at 49716 Hz and downsampling to the output rate[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.796 | [1;0mOPL: Running OPL3 on ports 220h and 388h[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.796 | [1;0mOPL: Sound Blaster 16 OPL output filter enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.796 | [1;0mDMA: Initialised primary controller[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.797 | [1;0mDMA: Initialised secondary controller[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.797 | [1;0mSB: Operating at 22050 Hz and upsampling to the output rate[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.797 | [1;0mSB16: Modern DAC output filter enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.797 | [1;0mSB16: Setting 'BLASTER' environment variable to 'A220 I7 D1 H5 T6'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.798 | [1;0mSB16: Running on port 220h, IRQ 7, DMA 1, and high DMA 5[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.798 | [1;0mPCSPEAKER: Operating at 32000 Hz and upsampling to the output rate[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.799 | [1;0mPCSPEAKER: Initialised impulse model[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.799 | [1;0mPCSPEAKER: High-pass filter enabled (18 dB/oct at 120 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.799 | [1;0mPCSPEAKER: Low-pass filter enabled (18 dB/oct at 4300 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.800 | [1;0mDISNEY: Operating at 48000 Hz without resampling[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.800 | [1;0mDISNEY: High-pass filter enabled (12 dB/oct at 100 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.800 | [1;0mDISNEY: Low-pass filter enabled (12 dB/oct at 2000 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.801 | [1;0mLPT_DAC: Initialised Disney Sound Source on LPT port 378h[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.801 | [1;0mPS1DAC: Operating at 48000 Hz without resampling[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.801 | [1;0mPS1DAC: High-pass filter enabled (18 dB/oct at 160 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.801 | [1;0mPS1DAC: Low-pass filter enabled (6 dB/oct at 2100 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.801 | [1;0mPS1: Operating at 250000 Hz and downsampling to the output rate[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.802 | [1;0mPS1: High-pass filter enabled (18 dB/oct at 160 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.802 | [1;0mPS1: Low-pass filter enabled (6 dB/oct at 2100 Hz)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.802 | [1;0mPS1: Initialised IBM PS/1 Audio card[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.803 | [1;0mMOUSE: Will be captured after the first left or right button click[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.803 | [1;0mMOUSE: Middle button will capture/release the mouse (clicks not sent to the game/program)[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.803 | [1;0mMOUSE (PS/2): Standard, 3 buttons[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.816 | [1;0mDOS: Loaded modern locale for country 1, 'United States'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.817 | [1;0mSLIRP: Slirp version: 4.8.0[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.818 | [1;0mSLIRP: Successfully initialized[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.818 | [1;0mNE2000: Initialised on port 300h and IRQ 3[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.820 | [1;0mCONFIG: Loaded auto-mounted drive config file 'C:\Program Files\DOSBox\resources\drives\y.conf'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.821 | [1;0mAUTOEXEC: Using autoexec from one or more joined sections[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.839 | [1;0mMAPPER: No joysticks found[1;0m
+[1;0m[1;33m2026-01-29 21:20:28.839 | MAPPER: Failed loading mapperfile 'mapper-sdl2-0.82.0.map' directly or from resources[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.840 | [1;0mMAPPER: Loaded default key bindings[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.850 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.851 | [1;0mSDL: Using standard SDI (auto) display refresh rate of 60 Hz[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.859 | [1;0mDISPLAY: VGA 720x400 16-colour text mode 03h at 70.087 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.35 (20:27) pixel aspect ratio[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.860 | [1;0mOPENGL: Enabled non-adaptive vsync[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.861 | [1;0mMOUNT: Path 'C:\Program Files\DOSBox\resources\drives\y' found[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.863 | [1;0mMOUNT: Path '.' found[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.939 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p-fake-double-scan'[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.939 | [1;0mVGA: Forcing single scanning of double-scanned VGA video modes[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.942 | [1;0mDISPLAY: VGA 320x200 256-colour graphics mode 13h at 70.086 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.2 (5:6) pixel aspect ratio[1;0m
+[1;0m[1;2m2026-01-29 21:20:28.993 | [1;0mSB16: Resetting DSP[1;0m
+[1;0m[1;2m2026-01-29 21:20:32.917 | [1;0mRENDER: Auto-switched to shader 'crt/vga-1080p'[1;0m
+[1;0m[1;2m2026-01-29 21:20:32.917 | [1;0mVGA: Double scanning VGA video modes enabled[1;0m
+[1;0m[1;2m2026-01-29 21:20:32.921 | [1;0mDISPLAY: VGA 720x400 16-colour text mode 03h at 70.087 Hz throttled VFR, scaled to 1067x800 pixels with 1:1.35 (20:27) pixel aspect ratio[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.987 | [1;0mPS1: Shutting down IBM PS/1 Audio card[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.987 | [1;0mDISNEY: Shutting down DAC[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.987 | [1;0mPCSPEAKER: Shutting down impulse model[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.987 | [1;0mOPL: Shutting down OPL3[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.988 | [1;0mSB16: Shutting down[1;0m
+[1;0m[1;2m2026-01-29 21:20:33.988 | [1;0mMPU-401: Shutting down[1;0m
+[1;0m[1;2m2026-01-29 21:20:34.187 | [1;0mCAPTURE: Image capturer shutting down[1;0m
+[1;0m[1;2m2026-01-29 21:20:34.187 | [1;0mDMA: Shutting down primary controller[1;0m
+[1;0m[1;2m2026-01-29 21:20:34.188 | [1;0mDMA: Shutting down secondary controller[1;0m
+[1;0m[1;2m2026-01-29 21:20:34.217 | [1;0matexit[1;0m
